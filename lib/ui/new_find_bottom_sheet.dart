@@ -51,7 +51,10 @@ class NewFindBottomSheet extends StatelessWidget {
                   if (state is PhotoTakenState)
                     SizedBox(
                       height: 500,
-                      child: Image.file(File(state.photoPath)),
+                      child: Image.file(
+                        File(state.photoPath),
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   const SizedBox(height: Dimens.marginStandard),
                   Center(
