@@ -35,6 +35,7 @@ class NewFindBottomSheet extends StatelessWidget {
                 children: [
                   const SizedBox(height: Dimens.marginStandard),
                   Text(appLocaleUtils.translate('new_find.photo')),
+                  const SizedBox(height: Dimens.marginStandard),
                   if (state is InitialState)
                     const SizedBox(
                       height: 500,
@@ -52,6 +53,7 @@ class NewFindBottomSheet extends StatelessWidget {
                       height: 500,
                       child: Image.file(File(state.photoPath)),
                     ),
+                  const SizedBox(height: Dimens.marginStandard),
                   Center(
                     child: FloatingActionButton(
                       onPressed: () {
