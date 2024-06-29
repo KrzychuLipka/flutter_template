@@ -5,12 +5,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_template/common/dimens.dart';
 import 'package:flutter_template/common/utils/app_locale_utils.dart';
+import 'package:flutter_template/common/utils/toast_utils.dart';
 import 'package:flutter_template/cubit/new_find/new_find_cubit.dart';
+import 'package:flutter_template/ui/camera_widget.dart';
+import 'package:get_it/get_it.dart';
 
 class NewFindBottomSheet extends StatelessWidget {
   final GlobalKey<FormState> formKey;
+  final ToastUtils _toastUtils = GetIt.instance.get<ToastUtils>();
 
-  const NewFindBottomSheet({
+  NewFindBottomSheet({
     super.key,
     required this.formKey,
   });
@@ -35,43 +39,26 @@ class NewFindBottomSheet extends StatelessWidget {
                 children: [
                   const SizedBox(height: Dimens.marginStandard),
                   Text(appLocaleUtils.translate('new_find.photo')),
-                  const SizedBox(height: Dimens.marginStandard),
-                  if (state is InitialState)
-                    const SizedBox(
-                      height: 500,
-                      child: Center(
-                        child: CircularProgressIndicator(),
-                      ),
-                    ),
-                  if (state is CameraReadyState)
-                    SizedBox(
-                      height: 500,
-                      child: CameraPreview(state.cameraController),
-                    ),
                   if (state is PhotoTakenState)
-                    SizedBox(
-                      height: 500,
+                    Container(
+                      height: 250,
+                      margin: const EdgeInsets.only(top: Dimens.marginStandard),
+                      alignment: Alignment.center,
                       child: Image.file(
                         File(state.photoPath),
                         fit: BoxFit.cover,
                       ),
                     ),
                   const SizedBox(height: Dimens.marginStandard),
-                  Center(
-                    child: FloatingActionButton(
-                      onPressed: () {
-                        if (state is CameraReadyState) {
-                          BlocProvider.of<NewFindCubit>(context)
-                              .takePhoto(state.cameraController);
-                        } else if (state is PhotoTakenState) {
-                          BlocProvider.of<NewFindCubit>(context)
-                              .showCameraPreview(state.cameraController);
-                        }
-                      },
-                      child: const Icon(Icons.photo_camera),
-                    ),
-                  ),
-                  const SizedBox(height: Dimens.marginDouble),
+                  if (state is InitialState)
+                    const Center(
+                      child: CircularProgressIndicator(),
+                    )
+                  else if (state is CameraReadyState)
+                    _getCameraWidget(context, state.cameraController)
+                  else if (state is PhotoTakenState)
+                    _getCameraWidget(context, state.cameraController),
+                  const SizedBox(height: Dimens.marginStandard),
                   Text('Rodzaj skamieniałości'),
                   TextFormField(
                     // Add your fossil type input field here
@@ -128,6 +115,11 @@ class NewFindBottomSheet extends StatelessWidget {
                   SizedBox(height: 16.0),
                   ElevatedButton(
                     onPressed: () {
+                      if (state is! PhotoTakenState) {
+                        _toastUtils.showToast(
+                            'new_find.photo_required', context);
+                        return;
+                      }
                       if (formKey.currentState?.validate() == true) {
                         // Handle form submission
                         Navigator.pop(context); // Close the bottom sheet
@@ -142,5 +134,36 @@ class NewFindBottomSheet extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Widget _getCameraWidget(
+    BuildContext context,
+    CameraController cameraController,
+  ) {
+    return Center(
+      child: FloatingActionButton(
+        child: const Icon(Icons.photo_camera),
+        onPressed: () => _openCamera(context, cameraController),
+      ),
+    );
+  }
+
+  void _openCamera(
+    BuildContext context,
+    CameraController cameraController,
+  ) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => CameraWidget(
+          cameraController: cameraController,
+        ),
+      ),
+    ).then((photoPath) {
+      if (photoPath is String) {
+        BlocProvider.of<NewFindCubit>(context)
+            .savePhoto(photoPath, cameraController);
+      }
+    });
   }
 }

@@ -1,3 +1,5 @@
 {
-  "new_find.photo": "Zdjęcie znaleziska"
+  "new_find.photo": "Zdjęcie znaleziska",
+  "new_find.photo_required": "Zdjęcie jest wymagane.",
+  "new_find.failed_to_take_photo": "Nie udało się zrobić zdjęcia. Upewnij się, że przydzieliłeś niezbędne uprawnienia."
 }

@@ -1,3 +1,5 @@
 {
-  "new_find.photo": "Photo of the find"
+  "new_find.photo": "Photo of the find",
+  "new_find.photo_required": "A photo is required.",
+  "new_find.failed_to_take_photo": "Failed to take a picture. Make sure you have assigned the necessary permissions."
 }

@@ -26,24 +26,12 @@ class NewFindCubit extends Cubit<NewFindState> {
     });
   }
 
-  void takePhoto(
-    CameraController cameraController,
-  ) async {
-    try {
-      final image = await cameraController.takePicture();
-      emit(PhotoTakenState(
-        photoPath: image.path,
-        cameraController: cameraController,
-      ));
-    } catch (error) {
-      Logger.d('Failed to take photo ($error)');
-    }
-  }
-
-  void showCameraPreview(
+  void savePhoto(
+    String photoPath,
     CameraController cameraController,
   ) {
-    emit(CameraReadyState(
+    emit(PhotoTakenState(
+      photoPath: photoPath,
       cameraController: cameraController,
     ));
   }
