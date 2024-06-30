@@ -35,4 +35,17 @@ class NewFindCubit extends Cubit<NewFindState> {
       cameraController: cameraController,
     ));
   }
+
+  Future<void> saveFind({
+    required String fossilType,
+    required String geologicalPeriod,
+    required String findDescription,
+    required String discoveryPlace,
+    required String discoveryDate,
+  }) async {
+    // TODO
+    print(
+        'fossilType=$fossilType; geologicalPeriod=$geologicalPeriod; findDescription=$findDescription; discoveryPlace=$discoveryPlace; discoveryDate=$discoveryDate');
+    return Future.value(null);
+  }
 }
