@@ -15,16 +15,6 @@ import 'package:get_it/get_it.dart';
 class NewFindBottomSheet extends StatelessWidget {
   final GlobalKey<FormState> formKey;
   final ToastUtils _toastUtils = GetIt.instance.get<ToastUtils>();
-  final TextEditingController _fossilTypeController = TextEditingController();
-  final TextEditingController _geologicalPeriodTypeController =
-      TextEditingController();
-  final TextEditingController _findDescriptionController = // TODO longer field
-      TextEditingController();
-  final TextEditingController
-      _discoveryPlaceController = // TODO map place picker
-      TextEditingController();
-  final TextEditingController _discoveryDateController = // TODO date picker
-      TextEditingController();
 
   NewFindBottomSheet({
     super.key,
@@ -75,31 +65,36 @@ class NewFindBottomSheet extends StatelessWidget {
                   Text(appLocaleUtils.translate('new_find.fossil_type')),
                   TextFormField(
                     validator: _validator(appLocaleUtils),
-                    controller: _fossilTypeController,
+                    controller: BlocProvider.of<NewFindCubit>(context)
+                        .fossilTypeController,
                   ),
                   const SizedBox(height: Dimens.marginStandard),
                   Text(appLocaleUtils.translate('new_find.geological_period')),
                   TextFormField(
                     validator: _validator(appLocaleUtils),
-                    controller: _geologicalPeriodTypeController,
+                    controller: BlocProvider.of<NewFindCubit>(context)
+                        .geologicalPeriodTypeController,
                   ),
                   const SizedBox(height: Dimens.marginStandard),
                   Text(appLocaleUtils.translate('new_find.find_description')),
                   TextFormField(
                     validator: _validator(appLocaleUtils),
-                    controller: _findDescriptionController,
+                    controller: BlocProvider.of<NewFindCubit>(context)
+                        .findDescriptionController,
                   ),
                   const SizedBox(height: Dimens.marginStandard),
                   Text(appLocaleUtils.translate('new_find.discovery_place')),
                   TextFormField(
                     validator: _validator(appLocaleUtils),
-                    controller: _discoveryPlaceController,
+                    controller: BlocProvider.of<NewFindCubit>(context)
+                        .discoveryPlaceController,
                   ),
                   const SizedBox(height: Dimens.marginStandard),
                   Text(appLocaleUtils.translate('new_find.discovery_date')),
                   TextFormField(
                     validator: _validator(appLocaleUtils),
-                    controller: _discoveryDateController,
+                    controller: BlocProvider.of<NewFindCubit>(context)
+                        .discoveryDateController,
                   ),
                   const SizedBox(height: Dimens.marginDouble),
                   ElevatedButton(
@@ -113,12 +108,23 @@ class NewFindBottomSheet extends StatelessWidget {
                         // TODO loader
                         BlocProvider.of<NewFindCubit>(context)
                             .saveFind(
-                          fossilType: _fossilTypeController.text,
+                          fossilType: BlocProvider.of<NewFindCubit>(context)
+                              .fossilTypeController
+                              .text,
                           geologicalPeriod:
-                              _geologicalPeriodTypeController.text,
-                          findDescription: _findDescriptionController.text,
-                          discoveryPlace: _discoveryPlaceController.text,
-                          discoveryDate: _discoveryDateController.text,
+                              BlocProvider.of<NewFindCubit>(context)
+                                  .geologicalPeriodTypeController
+                                  .text,
+                          findDescription:
+                              BlocProvider.of<NewFindCubit>(context)
+                                  .findDescriptionController
+                                  .text,
+                          discoveryPlace: BlocProvider.of<NewFindCubit>(context)
+                              .discoveryPlaceController
+                              .text,
+                          discoveryDate: BlocProvider.of<NewFindCubit>(context)
+                              .discoveryDateController
+                              .text,
                         )
                             .catchError((error) {
                           Logger.d('Failed to save the find');

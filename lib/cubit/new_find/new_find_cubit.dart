@@ -6,6 +6,29 @@ import 'package:flutter_template/common/utils/logger.dart';
 part 'new_find_state.dart';
 
 class NewFindCubit extends Cubit<NewFindState> {
+  TextEditingController get fossilTypeController => _fossilTypeController;
+  final TextEditingController _fossilTypeController = TextEditingController();
+
+  TextEditingController get geologicalPeriodTypeController =>
+      _geologicalPeriodTypeController;
+  final TextEditingController _geologicalPeriodTypeController =
+      TextEditingController();
+
+  TextEditingController get findDescriptionController =>
+      _findDescriptionController;
+  final TextEditingController _findDescriptionController = // TODO longer field
+      TextEditingController();
+
+  TextEditingController get discoveryPlaceController =>
+      _discoveryPlaceController;
+  final TextEditingController
+      _discoveryPlaceController = // TODO map place picker
+      TextEditingController();
+
+  TextEditingController get discoveryDateController => _discoveryDateController;
+  final TextEditingController _discoveryDateController = // TODO date picker
+      TextEditingController();
+
   NewFindCubit() : super(InitialState()) {
     availableCameras().catchError((error) {
       Logger.d('Failed to get available cameras ($error)');
