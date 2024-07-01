@@ -5,4 +5,5 @@ class Dimens {
   static const double marginDouble = 32;
   static const double marginStandard = 16;
   static const double marginSmall = 8;
+  static const int elevationStandard = 16;
 }

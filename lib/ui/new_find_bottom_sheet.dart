@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:camera/camera.dart';
+import 'package:date_picker_plus/date_picker_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_template/common/dimens.dart';
@@ -8,11 +8,17 @@ import 'package:flutter_template/common/utils/app_locale_utils.dart';
 import 'package:flutter_template/common/utils/logger.dart';
 import 'package:flutter_template/common/utils/toast_utils.dart';
 import 'package:flutter_template/cubit/new_find/new_find_cubit.dart';
+import 'package:flutter_template/data/repository/paleo_repository.dart';
 import 'package:flutter_template/ui/camera_widget.dart';
+import 'package:flutter_template/ui/dropdown_widget.dart';
 import 'package:get_it/get_it.dart';
 
 // TODO max size formatter
 class NewFindBottomSheet extends StatelessWidget {
+  static const _findDescriptionMaxLength = 250;
+  static const _findDescriptionMinLines = 2;
+  static const _findDescriptionMaxLines = 8;
+  static const _discoveryPlaceMaxLength = 50;
   final GlobalKey<FormState> formKey;
   final ToastUtils _toastUtils = GetIt.instance.get<ToastUtils>();
 
@@ -23,7 +29,6 @@ class NewFindBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TODO redundant code
     final AppLocaleUtils appLocaleUtils = AppLocaleUtils.of(context);
     return SingleChildScrollView(
       child: Container(
@@ -43,102 +48,56 @@ class NewFindBottomSheet extends StatelessWidget {
                   const SizedBox(height: Dimens.marginStandard),
                   Text(appLocaleUtils.translate('new_find.photo')),
                   if (state is PhotoTakenState)
-                    Container(
-                      height: 250,
-                      margin: const EdgeInsets.only(top: Dimens.marginStandard),
-                      alignment: Alignment.center,
-                      child: Image.file(
-                        File(state.photoPath),
-                        fit: BoxFit.cover,
-                      ),
-                    ),
+                    _getPhotoWidget(state.photoPath),
                   const SizedBox(height: Dimens.marginStandard),
-                  if (state is InitialState)
-                    const Center(
-                      child: CircularProgressIndicator(),
-                    )
-                  else if (state is CameraReadyState)
-                    _getCameraWidget(context, state.cameraController)
-                  else if (state is PhotoTakenState)
-                    _getCameraWidget(context, state.cameraController),
+                  _getCameraFabWidget(context),
                   const SizedBox(height: Dimens.marginDouble),
                   Text(appLocaleUtils.translate('new_find.fossil_type')),
-                  TextFormField(
-                    validator: _validator(appLocaleUtils),
-                    controller: BlocProvider.of<NewFindCubit>(context)
-                        .fossilTypeController,
+                  _getDropdownWidget(
+                    keyValue: 'fossilTypes',
+                    data: PaleoRepository.fossilTypes,
+                    valueChangeCallback: (value) {
+                      BlocProvider.of<NewFindCubit>(context)
+                          .saveFossilType(value);
+                    },
+                    context: context,
                   ),
                   const SizedBox(height: Dimens.marginStandard),
                   Text(appLocaleUtils.translate('new_find.geological_period')),
-                  TextFormField(
-                    validator: _validator(appLocaleUtils),
-                    controller: BlocProvider.of<NewFindCubit>(context)
-                        .geologicalPeriodTypeController,
+                  _getDropdownWidget(
+                    keyValue: 'geologicalPeriods',
+                    data: PaleoRepository.geologicalPeriods,
+                    valueChangeCallback: (value) {
+                      BlocProvider.of<NewFindCubit>(context)
+                          .saveGeologicalPeriod(value);
+                    },
+                    context: context,
                   ),
                   const SizedBox(height: Dimens.marginStandard),
                   Text(appLocaleUtils.translate('new_find.find_description')),
                   TextFormField(
-                    validator: _validator(appLocaleUtils),
+                    maxLength: _findDescriptionMaxLength,
+                    minLines: _findDescriptionMinLines,
+                    maxLines: _findDescriptionMaxLines,
+                    validator: _getFormFieldValidator(appLocaleUtils),
                     controller: BlocProvider.of<NewFindCubit>(context)
                         .findDescriptionController,
                   ),
                   const SizedBox(height: Dimens.marginStandard),
                   Text(appLocaleUtils.translate('new_find.discovery_place')),
                   TextFormField(
-                    validator: _validator(appLocaleUtils),
+                    maxLength: _discoveryPlaceMaxLength,
+                    validator: _getFormFieldValidator(appLocaleUtils),
                     controller: BlocProvider.of<NewFindCubit>(context)
                         .discoveryPlaceController,
                   ),
                   const SizedBox(height: Dimens.marginStandard),
                   Text(appLocaleUtils.translate('new_find.discovery_date')),
-                  TextFormField(
-                    validator: _validator(appLocaleUtils),
-                    controller: BlocProvider.of<NewFindCubit>(context)
-                        .discoveryDateController,
-                  ),
+                  _getDatePickerWidget(context),
                   const SizedBox(height: Dimens.marginDouble),
-                  ElevatedButton(
-                    onPressed: () {
-                      if (state is! PhotoTakenState) {
-                        _toastUtils.showToast(
-                            'new_find.photo_required', context);
-                        return;
-                      }
-                      if (formKey.currentState?.validate() == true) {
-                        // TODO loader
-                        BlocProvider.of<NewFindCubit>(context)
-                            .saveFind(
-                          fossilType: BlocProvider.of<NewFindCubit>(context)
-                              .fossilTypeController
-                              .text,
-                          geologicalPeriod:
-                              BlocProvider.of<NewFindCubit>(context)
-                                  .geologicalPeriodTypeController
-                                  .text,
-                          findDescription:
-                              BlocProvider.of<NewFindCubit>(context)
-                                  .findDescriptionController
-                                  .text,
-                          discoveryPlace: BlocProvider.of<NewFindCubit>(context)
-                              .discoveryPlaceController
-                              .text,
-                          discoveryDate: BlocProvider.of<NewFindCubit>(context)
-                              .discoveryDateController
-                              .text,
-                        )
-                            .catchError((error) {
-                          Logger.d('Failed to save the find');
-                          _toastUtils.showToast('new_find.save_error', context);
-                        }).then((_) {
-                          _toastUtils.showToast(
-                              'new_find.save_success', context);
-                          Navigator.pop(context);
-                        });
-                      }
-                    },
-                    child: Text(
-                      appLocaleUtils.translate('new_find.save_find'),
-                    ),
+                  _getSaveFindWidget(
+                    context: context,
+                    appLocaleUtils: appLocaleUtils,
                   ),
                 ],
               );
@@ -149,7 +108,36 @@ class NewFindBottomSheet extends StatelessWidget {
     );
   }
 
-  FormFieldValidator<String> _validator(
+  Widget _getPhotoWidget(
+    String photoPath,
+  ) {
+    return Container(
+      height: 250,
+      margin: const EdgeInsets.only(top: Dimens.marginStandard),
+      alignment: Alignment.center,
+      child: Image.file(
+        File(photoPath),
+        fit: BoxFit.cover,
+      ),
+    );
+  }
+
+  Widget _getDropdownWidget({
+    required String keyValue,
+    required List<String> data,
+    required Function(String) valueChangeCallback,
+    required BuildContext context,
+  }) {
+    return Center(
+      child: DropdownWidget(
+        key: Key(keyValue),
+        data: data,
+        valueChangeCallback: (String value) => valueChangeCallback(value),
+      ),
+    );
+  }
+
+  FormFieldValidator<String> _getFormFieldValidator(
     AppLocaleUtils appLocaleUtils,
   ) {
     return (value) {
@@ -160,33 +148,75 @@ class NewFindBottomSheet extends StatelessWidget {
     };
   }
 
-  Widget _getCameraWidget(
+  Widget _getCameraFabWidget(
     BuildContext context,
-    CameraController cameraController,
   ) {
     return Center(
       child: FloatingActionButton(
         child: const Icon(Icons.photo_camera),
-        onPressed: () => _openCamera(context, cameraController),
+        onPressed: () => _openCamera(context),
+      ),
+    );
+  }
+
+  Widget _getDatePickerWidget(
+    BuildContext context,
+  ) {
+    return Center(
+      child: SizedBox(
+        width: 300,
+        height: 400,
+        child: DatePicker(
+          minDate: DateTime(2024, 1, 1),
+          maxDate: DateTime(2100, 1, 1),
+          onDateSelected: (dateTime) {
+            BlocProvider.of<NewFindCubit>(context)
+                .saveDiscoveryDate(dateTime.toIso8601String());
+            // Handle selected date
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _getSaveFindWidget({
+    required BuildContext context,
+    required AppLocaleUtils appLocaleUtils,
+  }) {
+    return ElevatedButton(
+      onPressed: () {
+        if (!BlocProvider.of<NewFindCubit>(context).isPhotoSaved()) {
+          _toastUtils.showToast('new_find.photo_required', context);
+          return;
+        }
+        if (formKey.currentState?.validate() == true) {
+          // TODO loader
+          BlocProvider.of<NewFindCubit>(context).saveFind().catchError((error) {
+            Logger.d('Failed to save the find');
+            _toastUtils.showToast('new_find.save_error', context);
+          }).then((_) {
+            _toastUtils.showToast('new_find.save_success', context);
+            Navigator.pop(context);
+          });
+        }
+      },
+      child: Text(
+        appLocaleUtils.translate('new_find.save_find'),
       ),
     );
   }
 
   void _openCamera(
     BuildContext context,
-    CameraController cameraController,
   ) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => CameraWidget(
-          cameraController: cameraController,
-        ),
+        builder: (context) => CameraWidget(),
       ),
     ).then((photoPath) {
       if (photoPath is String) {
-        BlocProvider.of<NewFindCubit>(context)
-            .savePhoto(photoPath, cameraController);
+        BlocProvider.of<NewFindCubit>(context).savePhoto(photoPath);
       }
     });
   }
