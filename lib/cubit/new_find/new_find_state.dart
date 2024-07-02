@@ -9,6 +9,6 @@ final class PhotoTakenState extends NewFindState {
   final String photoPath;
 
   PhotoTakenState({
-    this.photoPath = '',
+    required this.photoPath,
   });
 }

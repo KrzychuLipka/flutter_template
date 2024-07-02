@@ -51,10 +51,12 @@ android {
             signingConfig = signingConfigs.debug
         }
     }
-
     packagingOptions {
-        exclude 'META-INF/DEPENDENCIES'
+        resources {
+            excludes += ['META-INF/DEPENDENCIES']
+        }
     }
+
 }
 
 flutter {

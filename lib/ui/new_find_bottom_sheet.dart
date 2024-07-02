@@ -13,12 +13,12 @@ import 'package:flutter_template/ui/camera_widget.dart';
 import 'package:flutter_template/ui/dropdown_widget.dart';
 import 'package:get_it/get_it.dart';
 
-// TODO max size formatter
 class NewFindBottomSheet extends StatelessWidget {
   static const _findDescriptionMaxLength = 250;
   static const _findDescriptionMinLines = 2;
   static const _findDescriptionMaxLines = 8;
-  static const _discoveryPlaceMaxLength = 50;
+  static const _discoveryPlaceMaxLength = 150;
+  static const _discoveryPlaceLines = 4;
   final GlobalKey<FormState> formKey;
   final ToastUtils _toastUtils = GetIt.instance.get<ToastUtils>();
 
@@ -85,8 +85,13 @@ class NewFindBottomSheet extends StatelessWidget {
                   ),
                   const SizedBox(height: Dimens.marginStandard),
                   Text(appLocaleUtils.translate('new_find.discovery_place')),
+                  const SizedBox(height: Dimens.marginStandard),
+                  _getMyLocationFabWidget(context),
+                  const SizedBox(height: Dimens.marginSmall),
                   TextFormField(
                     maxLength: _discoveryPlaceMaxLength,
+                    minLines: _discoveryPlaceLines,
+                    maxLines: _discoveryPlaceLines,
                     validator: _getFormFieldValidator(appLocaleUtils),
                     controller: BlocProvider.of<NewFindCubit>(context)
                         .discoveryPlaceController,
@@ -104,6 +109,19 @@ class NewFindBottomSheet extends StatelessWidget {
             },
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _getMyLocationFabWidget(
+    BuildContext context,
+  ) {
+    return Center(
+      child: FloatingActionButton(
+        child: const Icon(Icons.my_location),
+        onPressed: () {
+          BlocProvider.of<NewFindCubit>(context).determineUserPosition(context);
+        },
       ),
     );
   }

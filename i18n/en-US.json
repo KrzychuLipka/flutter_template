@@ -10,5 +10,9 @@
   "new_find.save_find": "Save your find",
   "new_find.save_error": "The finding could not be saved.",
   "new_find.save_success": "Your finding has been successfully saved.",
-  "new_find.geological_period": "Geological period"
+  "new_find.geological_period": "Geological period",
+  "geo_locator.location_services_disabled": "Enable location to enable automatic retrieval of your position.",
+  "geo_locator.locations_permissions_denied": "Without assigning location permissions, it will not be possible to retrieve your position.",
+  "geo_locator.locations_permissions_denied_forever": "Enable location in the App Settings.",
+  "geo_locator.requesting_location": "Determination of your location is in progress. Please wait."
 }

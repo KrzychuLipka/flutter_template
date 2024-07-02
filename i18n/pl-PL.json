@@ -10,5 +10,9 @@
   "new_find.save_find": "Zapisz znalezisko",
   "new_find.save_error": "Nie udało się zapisać znaleziska.",
   "new_find.save_success": "Twoje znalezisko zostało pomyślnie zapisane.",
-  "form.required_field": "To pole jest wymagane"
+  "form.required_field": "To pole jest wymagane",
+  "geo_locator.location_services_disabled": "Włącz lokalizację w celu umożliwienia automatycznego pobrania Twojej pozycji.",
+  "geo_locator.locations_permissions_denied": "Bez przydzielenia uprawnień do lokalizacji, nie będzie możliwe pobranie Twojej pozycji.",
+  "geo_locator.locations_permissions_denied_forever": "Włącz lokalizację w Ustawieniach aplikacji.",
+  "geo_locator.requesting_location": "Trwa ustalanie Twojej lokalizacji. Proszę czekać."
 }

@@ -20,7 +20,7 @@
 - Artyku³y
 - Filmy
 
-W Polsce istnieje wiele interesuj¹cych obszarów zwi¹zanych z paleontologi¹. Oto kilka z nich:
+W Polsce i`stnieje wiele interesuj¹cych obsza`rów zwi¹zanych z paleontologi¹. Oto kilka z nich:
 Dolina Piêciu Stawów Polskich: To malownicze miejsce w Tatrach, gdzie odkryto skamienia³oœci dinozaurów, w tym teropodów i dinozaurów ptasiomiednicznych1.
 Wybrze¿e Ba³tyku: W okolicach Gdañska, Stegny, Elbl¹ga oraz Malborka, Tczewa, Ko³obrzegu, Mielna i Szczecina znajduj¹ siê obszary, które mog¹ byæ zagro¿one podniesieniem poziomu morza. Eksperci z Climate Central prognozuj¹, ¿e nawet wzrost o 10 metrów mo¿e zmieniæ liniê brzegow¹ Polski1.
 Inne tajemnicze miejsca: Polska kryje równie¿ inne ciekawe obszary, takie jak Jura Krakowsko-Czêstochowska, gdzie znajduj¹ siê liczne jaskinie i skamienia³oœci, czy te¿ Dolina Baryczy, gdzie odkryto pozosta³oœci mamutów i innych prehistorycznych zwierz¹t.
