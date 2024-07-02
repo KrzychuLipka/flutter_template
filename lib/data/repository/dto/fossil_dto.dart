@@ -1,13 +1,22 @@
 class FossilDto {
-  final String photoId;
+  static const String fieldNamePhotoURL = 'photoURL';
+  static const String fieldNameFossilType = 'fossilType';
+  static const String fieldNameGeologicalPeriod = 'geologicalPeriod';
+  static const String fieldNameFindDescription = 'findDescription';
+  static const String fieldNameDiscoveryPlace = 'discoveryPlace';
+  static const String fieldNameDiscoveryDate = 'discoveryDate';
+  static const String fieldNameLatitude = 'latitude';
+  static const String fieldNameLongitude = 'longitude';
+
+  final String photoURL;
   final String fossilType;
   final String geologicalPeriod;
   final String findDescription;
-  final String discoveryPlace;
+  final Map<String, double> discoveryPlace;
   final String discoveryDate;
 
   FossilDto({
-    required this.photoId,
+    required this.photoURL,
     required this.fossilType,
     required this.geologicalPeriod,
     required this.findDescription,
@@ -17,12 +26,12 @@ class FossilDto {
 
   Map<String, dynamic> toMap() {
     return {
-      'photoId': photoId,
-      'fossilType': fossilType,
-      'geologicalPeriod': geologicalPeriod,
-      'findDescription': findDescription,
-      'discoveryPlace': discoveryPlace,
-      'discoveryDate': discoveryDate,
+      fieldNamePhotoURL: photoURL,
+      fieldNameFossilType: fossilType,
+      fieldNameGeologicalPeriod: geologicalPeriod,
+      fieldNameFindDescription: findDescription,
+      fieldNameDiscoveryPlace: discoveryPlace,
+      fieldNameDiscoveryDate: discoveryDate,
     };
   }
 }

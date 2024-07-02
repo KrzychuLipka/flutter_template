@@ -12,3 +12,11 @@ final class PhotoTakenState extends NewFindState {
     required this.photoPath,
   });
 }
+
+final class FindSavingState extends NewFindState {
+  final bool savingInProgress;
+
+  FindSavingState({
+    required this.savingInProgress,
+  });
+}

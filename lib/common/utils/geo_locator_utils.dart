@@ -1,9 +1,10 @@
+import 'package:flutter_template/common/utils/logger.dart';
 import 'package:flutter_template/data/model/error.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 
 class GeoLocatorUtils {
-  Future<String> determineUserPosition() async {
+  Future<Position> determineUserPosition() async {
     bool isLocationServiceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!isLocationServiceEnabled) {
       return Future.error(LocationServicesDisabled());
@@ -18,15 +19,21 @@ class GeoLocatorUtils {
     if (locationPermissions == LocationPermission.deniedForever) {
       return Future.error(LocationPermissionsDeniedForever());
     }
-    final position = await Geolocator.getCurrentPosition();
-    List<Placemark> placeMarks =
-        await placemarkFromCoordinates(position.latitude, position.longitude);
-    if (placeMarks.isEmpty) return '';
-    final placeMark = placeMarks.first;
-    final country = placeMark.country;
-    final administrativeArea = placeMark.administrativeArea;
-    final subAdministrativeArea = placeMark.subAdministrativeArea;
-    final postalCode = placeMark.postalCode;
-    return '$postalCode\n$subAdministrativeArea\n$administrativeArea\n$country';
+    return await Geolocator.getCurrentPosition();
+  }
+
+  Future<String> getFormattedAddress({
+    required Position position,
+  }) async {
+    try {
+      List<Placemark> placeMarks =
+          await placemarkFromCoordinates(position.latitude, position.longitude);
+      if (placeMarks.isEmpty) return '';
+      final placeMark = placeMarks.first;
+      return '${placeMark.postalCode}\n${placeMark.subAdministrativeArea}\n${placeMark.administrativeArea}\n${placeMark.country}';
+    } catch (error) {
+      Logger.d('$error');
+      return '${position.latitude}; ${position.longitude}';
+    }
   }
 }

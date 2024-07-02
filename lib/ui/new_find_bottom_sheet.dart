@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:camera/camera.dart';
 import 'package:date_picker_plus/date_picker_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -39,7 +40,7 @@ class NewFindBottomSheet extends StatelessWidget {
         ),
         child: Form(
           key: formKey,
-          child: BlocBuilder<NewFindCubit, NewFindState>(
+          child: BlocConsumer<NewFindCubit, NewFindState>(
             builder: (context, state) {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -102,9 +103,15 @@ class NewFindBottomSheet extends StatelessWidget {
                   _getSaveFindWidget(
                     context: context,
                     appLocaleUtils: appLocaleUtils,
+                    state: state,
                   ),
                 ],
               );
+            },
+            listener: (BuildContext context, NewFindState state) {
+              if (state is FindSavingState && !state.savingInProgress) {
+                Navigator.pop(context);
+              }
             },
           ),
         ),
@@ -199,7 +206,13 @@ class NewFindBottomSheet extends StatelessWidget {
   Widget _getSaveFindWidget({
     required BuildContext context,
     required AppLocaleUtils appLocaleUtils,
+    required NewFindState state,
   }) {
+    if (state is FindSavingState && state.savingInProgress) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
     return ElevatedButton(
       onPressed: () {
         if (!BlocProvider.of<NewFindCubit>(context).isPhotoSaved()) {
@@ -207,7 +220,6 @@ class NewFindBottomSheet extends StatelessWidget {
           return;
         }
         if (formKey.currentState?.validate() == true) {
-          // TODO loader
           BlocProvider.of<NewFindCubit>(context).saveFind(context);
         }
       },
@@ -225,9 +237,9 @@ class NewFindBottomSheet extends StatelessWidget {
       MaterialPageRoute(
         builder: (context) => CameraWidget(),
       ),
-    ).then((photoPath) {
-      if (photoPath is String) {
-        BlocProvider.of<NewFindCubit>(context).savePhoto(photoPath);
+    ).then((photoFile) {
+      if (photoFile is XFile) {
+        BlocProvider.of<NewFindCubit>(context).savePhoto(photoFile);
       }
     });
   }

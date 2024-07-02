@@ -64,8 +64,8 @@ class CameraWidget extends StatelessWidget {
       _toastUtils.showToast('new_find.failed_to_take_photo', context);
       Navigator.pop(context);
       return error;
-    }).then((photo) {
-      Navigator.pop(context, photo.path);
+    }).then((photoFile) {
+      Navigator.pop(context, photoFile);
     });
   }
 }
