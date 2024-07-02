@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_template/common/dimens.dart';
 import 'package:flutter_template/common/utils/app_locale_utils.dart';
-import 'package:flutter_template/common/utils/logger.dart';
 import 'package:flutter_template/common/utils/toast_utils.dart';
 import 'package:flutter_template/cubit/new_find/new_find_cubit.dart';
 import 'package:flutter_template/data/repository/paleo_repository.dart';
@@ -209,13 +208,7 @@ class NewFindBottomSheet extends StatelessWidget {
         }
         if (formKey.currentState?.validate() == true) {
           // TODO loader
-          BlocProvider.of<NewFindCubit>(context).saveFind().catchError((error) {
-            Logger.d('Failed to save the find');
-            _toastUtils.showToast('new_find.save_error', context);
-          }).then((_) {
-            _toastUtils.showToast('new_find.save_success', context);
-            Navigator.pop(context);
-          });
+          BlocProvider.of<NewFindCubit>(context).saveFind(context);
         }
       },
       child: Text(

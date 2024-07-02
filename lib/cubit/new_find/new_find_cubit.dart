@@ -4,6 +4,8 @@ import 'package:flutter_template/common/utils/geo_locator_utils.dart';
 import 'package:flutter_template/common/utils/logger.dart';
 import 'package:flutter_template/common/utils/toast_utils.dart';
 import 'package:flutter_template/data/model/error.dart';
+import 'package:flutter_template/data/repository/dto/fossil_dto.dart';
+import 'package:flutter_template/data/repository/fossils_repository.dart';
 import 'package:flutter_template/data/repository/paleo_repository.dart';
 import 'package:get_it/get_it.dart';
 
@@ -13,6 +15,8 @@ class NewFindCubit extends Cubit<NewFindState> {
   final GeoLocatorUtils _geoLocatorUtils =
       GetIt.instance.get<GeoLocatorUtils>();
   final ToastUtils _toastUtils = GetIt.instance.get<ToastUtils>();
+  final FossilsRepository _fossilsRepository =
+      GetIt.instance.get<FossilsRepository>();
 
   TextEditingController get findDescriptionController =>
       _findDescriptionController;
@@ -75,12 +79,27 @@ class NewFindCubit extends Cubit<NewFindState> {
     });
   }
 
-  Future<void> saveFind() async {
+  void saveFind(
+    BuildContext context,
+  ) {
     if (_discoveryDate.trim().isEmpty) {
       _discoveryDate = DateTime.now().toIso8601String();
     }
-    Logger.d(
-        'photo: $_photoPath, fossilType=$_fossilType; geologicalPeriod=$_geologicalPeriod; findDescription=${_findDescriptionController.text}; discoveryPlace=${_discoveryPlaceController.text}; discoveryDate=$_discoveryDate');
-    return Future.value(null);
+    final fossilDto = FossilDto(
+      photoId: _photoPath,
+      fossilType: _fossilType,
+      geologicalPeriod: _geologicalPeriod,
+      findDescription: _findDescriptionController.text,
+      discoveryPlace: _discoveryPlaceController.text,
+      discoveryDate: _discoveryDate,
+    );
+    _fossilsRepository.saveFossil(fossilDto: fossilDto).catchError((error) {
+      Logger.d('Failed to save fossil: $error');
+      _toastUtils.showToast('new_find.save_error', context);
+      return error;
+    }).then((result) {
+      Logger.d('Fossil saved with id=${result.id}');
+      _toastUtils.showToast('new_find.save_success', context);
+    });
   }
 }
