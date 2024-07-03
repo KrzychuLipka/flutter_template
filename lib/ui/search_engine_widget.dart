@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_template/common/dimens.dart';
 import 'package:flutter_template/common/utils/app_locale_utils.dart';
 import 'package:flutter_template/data/model/search_item.dart';
 

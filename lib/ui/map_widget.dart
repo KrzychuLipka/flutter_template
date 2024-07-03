@@ -31,7 +31,12 @@ class MapWidget extends StatelessWidget {
       children: [
         _map(),
         Padding(
-          padding: const EdgeInsets.all(Dimens.marginStandard),
+          padding: const EdgeInsets.fromLTRB(
+            Dimens.marginStandard,
+            Dimens.marginStandard,
+            Dimens.marginStandard,
+            86,
+          ),
           child: SearchEngineWidget(
             searchItems: [
               SearchItem(title: 'Znalezisko 1', subTitle: 'Okres 1'),
@@ -39,6 +44,16 @@ class MapWidget extends StatelessWidget {
               SearchItem(title: 'Znalezisko 3', subTitle: 'Okres 1'),
               SearchItem(title: 'Znalezisko 4', subTitle: 'Okres 2'),
               SearchItem(title: 'Znalezisko 5', subTitle: 'Okres 2'),
+              SearchItem(title: 'Znalezisko 6', subTitle: 'Okres 1'),
+              SearchItem(title: 'Znalezisko 7', subTitle: 'Okres 1'),
+              SearchItem(title: 'Znalezisko 8', subTitle: 'Okres 1'),
+              SearchItem(title: 'Znalezisko 9', subTitle: 'Okres 2'),
+              SearchItem(title: 'Znalezisko 10', subTitle: 'Okres 2'),
+              SearchItem(title: 'Znalezisko 11', subTitle: 'Okres 1'),
+              SearchItem(title: 'Znalezisko 12', subTitle: 'Okres 1'),
+              SearchItem(title: 'Znalezisko 13', subTitle: 'Okres 1'),
+              SearchItem(title: 'Znalezisko 14', subTitle: 'Okres 2'),
+              SearchItem(title: 'Znalezisko 15', subTitle: 'Okres 2'),
             ],
           ),
         ),
