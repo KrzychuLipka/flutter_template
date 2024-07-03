@@ -2,7 +2,7 @@
   "new_find.photo": "Photo of the find",
   "new_find.photo_required": "A photo is required.",
   "new_find.failed_to_take_photo": "Failed to take a picture. Make sure you have assigned the necessary permissions.",
-  "new_find.fossil_type": "Type of fossil",
+  "new_find.fossil_type": "Category:",
   "form.required_field": "This field is required",
   "new_find.find_description": "Description of the find",
   "new_find.discovery_place": "Place of discovery",
@@ -10,9 +10,10 @@
   "new_find.save_find": "Save your find",
   "new_find.save_error": "The finding could not be saved.",
   "new_find.save_success": "Your finding has been successfully saved.",
-  "new_find.geological_period": "Geological period",
+  "new_find.geological_period": "Period:",
   "geo_locator.location_services_disabled": "Enable location to enable automatic retrieval of your position.",
   "geo_locator.locations_permissions_denied": "Without assigning location permissions, it will not be possible to retrieve your position.",
   "geo_locator.locations_permissions_denied_forever": "Enable location in the App Settings.",
-  "geo_locator.requesting_location": "Determination of your location is in progress. Please wait."
+  "geo_locator.requesting_location": "Determination of your location is in progress. Please wait.",
+  "search_engine.hint": "Search for a find"
 }

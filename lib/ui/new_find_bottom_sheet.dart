@@ -46,63 +46,29 @@ class NewFindBottomSheet extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: Dimens.marginStandard),
+                  _getCloseButton(context),
+                  const SizedBox(height: Dimens.marginSmall),
                   Text(appLocaleUtils.translate('new_find.photo')),
                   if (state is PhotoTakenState)
                     _getPhotoWidget(state.photoPath),
                   const SizedBox(height: Dimens.marginStandard),
                   _getCameraFabWidget(context),
-                  const SizedBox(height: Dimens.marginDouble),
-                  Text(appLocaleUtils.translate('new_find.fossil_type')),
-                  _getDropdownWidget(
-                    keyValue: 'fossilTypes',
-                    data: PaleoRepository.fossilTypes,
-                    valueChangeCallback: (value) {
-                      BlocProvider.of<NewFindCubit>(context)
-                          .saveFossilType(value);
-                    },
-                    context: context,
-                  ),
                   const SizedBox(height: Dimens.marginStandard),
-                  Text(appLocaleUtils.translate('new_find.geological_period')),
-                  _getDropdownWidget(
-                    keyValue: 'geologicalPeriods',
-                    data: PaleoRepository.geologicalPeriods,
-                    valueChangeCallback: (value) {
-                      BlocProvider.of<NewFindCubit>(context)
-                          .saveGeologicalPeriod(value);
-                    },
-                    context: context,
-                  ),
+                  _getFossilTypeSelectionWidget(context),
                   const SizedBox(height: Dimens.marginStandard),
-                  Text(appLocaleUtils.translate('new_find.find_description')),
-                  TextFormField(
-                    maxLength: _findDescriptionMaxLength,
-                    minLines: _findDescriptionMinLines,
-                    maxLines: _findDescriptionMaxLines,
-                    validator: _getFormFieldValidator(appLocaleUtils),
-                    controller: BlocProvider.of<NewFindCubit>(context)
-                        .findDescriptionController,
-                  ),
+                  _getGeologicalPeriodSelectionWidget(context),
                   const SizedBox(height: Dimens.marginStandard),
-                  Text(appLocaleUtils.translate('new_find.discovery_place')),
+                  _getFindDescriptionWidget(context),
                   const SizedBox(height: Dimens.marginStandard),
                   _getMyLocationFabWidget(context),
-                  const SizedBox(height: Dimens.marginSmall),
-                  TextFormField(
-                    maxLength: _discoveryPlaceMaxLength,
-                    minLines: _discoveryPlaceLines,
-                    maxLines: _discoveryPlaceLines,
-                    validator: _getFormFieldValidator(appLocaleUtils),
-                    controller: BlocProvider.of<NewFindCubit>(context)
-                        .discoveryPlaceController,
-                  ),
+                  const SizedBox(height: Dimens.marginStandard),
+                  _getDiscoveryPlaceWidget(context),
                   const SizedBox(height: Dimens.marginStandard),
                   Text(appLocaleUtils.translate('new_find.discovery_date')),
                   _getDatePickerWidget(context),
                   const SizedBox(height: Dimens.marginDouble),
                   _getSaveFindWidget(
                     context: context,
-                    appLocaleUtils: appLocaleUtils,
                     state: state,
                   ),
                 ],
@@ -115,6 +81,128 @@ class NewFindBottomSheet extends StatelessWidget {
             },
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _getFossilTypeSelectionWidget(
+    BuildContext context,
+  ) {
+    return _getSelectionWidget(
+      labelKey: 'new_find.fossil_type',
+      keyValue: 'fossilTypes',
+      data: PaleoRepository.fossilTypes,
+      valueChangeCallback: (value) {
+        BlocProvider.of<NewFindCubit>(context).saveFossilType(value);
+      },
+      context: context,
+    );
+  }
+
+  Widget _getSelectionWidget({
+    required String labelKey,
+    required String keyValue,
+    required List<String> data,
+    required Function(String) valueChangeCallback,
+    required BuildContext context,
+  }) {
+    return Row(
+      children: [
+        Expanded(
+          flex: 1,
+          child: Text(AppLocaleUtils.of(context).translate(labelKey)),
+        ),
+        Expanded(
+          flex: 2,
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: DropdownWidget(
+              key: Key(keyValue),
+              data: data,
+              valueChangeCallback: (String value) => valueChangeCallback(value),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _getGeologicalPeriodSelectionWidget(
+    BuildContext context,
+  ) {
+    return _getSelectionWidget(
+      labelKey: 'new_find.geological_period',
+      keyValue: 'geologicalPeriods',
+      data: PaleoRepository.geologicalPeriods,
+      valueChangeCallback: (value) {
+        BlocProvider.of<NewFindCubit>(context).saveGeologicalPeriod(value);
+      },
+      context: context,
+    );
+  }
+
+  Widget _getFindDescriptionWidget(
+    BuildContext context,
+  ) {
+    return _getTextFormFieldWidget(
+      labelKey: 'new_find.find_description',
+      maxLength: _findDescriptionMaxLength,
+      minLines: _findDescriptionMinLines,
+      maxLines: _findDescriptionMaxLines,
+      textEditingController:
+          BlocProvider.of<NewFindCubit>(context).findDescriptionController,
+      context: context,
+    );
+  }
+
+  Widget _getTextFormFieldWidget({
+    required String labelKey,
+    required int maxLength,
+    required int minLines,
+    required int maxLines,
+    required TextEditingController textEditingController,
+    required BuildContext context,
+  }) {
+    AppLocaleUtils appLocaleUtils = AppLocaleUtils.of(context);
+    return TextFormField(
+      maxLength: maxLength,
+      minLines: minLines,
+      maxLines: maxLines,
+      validator: _getFormFieldValidator(appLocaleUtils),
+      controller: textEditingController,
+      decoration: InputDecoration(
+        label: Text(
+          appLocaleUtils.translate(labelKey),
+        ),
+        border: const OutlineInputBorder(),
+      ),
+    );
+  }
+
+  Widget _getDiscoveryPlaceWidget(
+    BuildContext context,
+  ) {
+    return _getTextFormFieldWidget(
+      labelKey: 'new_find.discovery_place',
+      maxLength: _discoveryPlaceMaxLength,
+      minLines: _discoveryPlaceLines,
+      maxLines: _discoveryPlaceLines,
+      textEditingController:
+          BlocProvider.of<NewFindCubit>(context).discoveryPlaceController,
+      context: context,
+    );
+  }
+
+  Widget _getCloseButton(
+    BuildContext context,
+  ) {
+    return Align(
+      alignment: Alignment.centerRight,
+      child: IconButton(
+        icon: const Icon(Icons.close),
+        onPressed: () {
+          Navigator.pop(context);
+        },
       ),
     );
   }
@@ -137,26 +225,11 @@ class NewFindBottomSheet extends StatelessWidget {
   ) {
     return Container(
       height: 250,
-      margin: const EdgeInsets.only(top: Dimens.marginStandard),
+      margin: const EdgeInsets.only(top: Dimens.marginSmall),
       alignment: Alignment.center,
       child: Image.file(
         File(photoPath),
         fit: BoxFit.cover,
-      ),
-    );
-  }
-
-  Widget _getDropdownWidget({
-    required String keyValue,
-    required List<String> data,
-    required Function(String) valueChangeCallback,
-    required BuildContext context,
-  }) {
-    return Center(
-      child: DropdownWidget(
-        key: Key(keyValue),
-        data: data,
-        valueChangeCallback: (String value) => valueChangeCallback(value),
       ),
     );
   }
@@ -188,9 +261,25 @@ class NewFindBottomSheet extends StatelessWidget {
   ) {
     return Center(
       child: SizedBox(
-        width: 300,
         height: 400,
         child: DatePicker(
+          selectedCellDecoration: BoxDecoration(
+            border: Border.all(color: Colors.black),
+            shape: BoxShape.circle,
+          ),
+          centerLeadingDate: true,
+          enabledCellsTextStyle: const TextStyle(color: Colors.black),
+          disabledCellsTextStyle: const TextStyle(color: Colors.black),
+          daysOfTheWeekTextStyle: const TextStyle(
+            color: Colors.black,
+            fontSize: Dimens.fontSizeSmall,
+          ),
+          leadingDateTextStyle: const TextStyle(color: Colors.black),
+          currentDateTextStyle: const TextStyle(color: Colors.black),
+          selectedCellTextStyle: const TextStyle(color: Colors.black),
+          slidersColor: Colors.black,
+          splashColor: Colors.amber,
+          highlightColor: Colors.black,
           minDate: DateTime(2024, 1, 1),
           maxDate: DateTime(2100, 1, 1),
           onDateSelected: (dateTime) {
@@ -205,7 +294,6 @@ class NewFindBottomSheet extends StatelessWidget {
 
   Widget _getSaveFindWidget({
     required BuildContext context,
-    required AppLocaleUtils appLocaleUtils,
     required NewFindState state,
   }) {
     if (state is FindSavingState && state.savingInProgress) {
@@ -224,7 +312,7 @@ class NewFindBottomSheet extends StatelessWidget {
         }
       },
       child: Text(
-        appLocaleUtils.translate('new_find.save_find'),
+        AppLocaleUtils.of(context).translate('new_find.save_find'),
       ),
     );
   }

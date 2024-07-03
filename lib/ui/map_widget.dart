@@ -5,7 +5,9 @@ import 'package:flutter_template/common/consts/map_consts.dart';
 import 'package:flutter_template/common/dimens.dart';
 import 'package:flutter_template/cubit/map/map_cubit.dart';
 import 'package:flutter_template/cubit/new_find/new_find_cubit.dart';
+import 'package:flutter_template/data/model/search_item.dart';
 import 'package:flutter_template/ui/new_find_bottom_sheet.dart';
+import 'package:flutter_template/ui/search_engine_widget.dart';
 
 class MapWidget extends StatelessWidget {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -16,15 +18,31 @@ class MapWidget extends StatelessWidget {
   Widget build(
     BuildContext context,
   ) {
-    return Scaffold(
-      body: _map(),
-      floatingActionButton: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          _toggleBaseMapButton(context),
-          _reportNewFindButton(context),
-        ],
+    return SafeArea(
+      child: Scaffold(
+        body: _getBodyWidget(),
+        floatingActionButton: _getButtonsWidget(context),
       ),
+    );
+  }
+
+  Widget _getBodyWidget() {
+    return Stack(
+      children: [
+        _map(),
+        Padding(
+          padding: const EdgeInsets.all(Dimens.marginStandard),
+          child: SearchEngineWidget(
+            searchItems: [
+              SearchItem(title: 'Znalezisko 1', subTitle: 'Okres 1'),
+              SearchItem(title: 'Znalezisko 2', subTitle: 'Okres 1'),
+              SearchItem(title: 'Znalezisko 3', subTitle: 'Okres 1'),
+              SearchItem(title: 'Znalezisko 4', subTitle: 'Okres 2'),
+              SearchItem(title: 'Znalezisko 5', subTitle: 'Okres 2'),
+            ],
+          ),
+        ),
+      ],
     );
   }
 
@@ -48,7 +66,19 @@ class MapWidget extends StatelessWidget {
     );
   }
 
-  Widget _toggleBaseMapButton(
+  Widget _getButtonsWidget(
+    BuildContext context,
+  ) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        _getToggleBaseMapButtonWidget(context),
+        _getReportNewFindButtonWidget(context),
+      ],
+    );
+  }
+
+  Widget _getToggleBaseMapButtonWidget(
     BuildContext context,
   ) {
     return Padding(
@@ -60,7 +90,7 @@ class MapWidget extends StatelessWidget {
     );
   }
 
-  Widget _reportNewFindButton(
+  Widget _getReportNewFindButtonWidget(
     BuildContext context,
   ) {
     return FloatingActionButton(

@@ -2,8 +2,8 @@
   "new_find.photo": "Zdjęcie znaleziska",
   "new_find.photo_required": "Zdjęcie jest wymagane.",
   "new_find.failed_to_take_photo": "Nie udało się zrobić zdjęcia. Upewnij się, że przydzieliłeś niezbędne uprawnienia.",
-  "new_find.fossil_type": "Rodzaj skamieniałości",
-  "new_find.geological_period": "Okres geologiczny",
+  "new_find.fossil_type": "Kategoria:",
+  "new_find.geological_period": "Okres:",
   "new_find.find_description": "Opis znaleziska",
   "new_find.discovery_place": "Miejsce odkrycia",
   "new_find.discovery_date": "Data odkrycia",
@@ -14,5 +14,6 @@
   "geo_locator.location_services_disabled": "Włącz lokalizację w celu umożliwienia automatycznego pobrania Twojej pozycji.",
   "geo_locator.locations_permissions_denied": "Bez przydzielenia uprawnień do lokalizacji, nie będzie możliwe pobranie Twojej pozycji.",
   "geo_locator.locations_permissions_denied_forever": "Włącz lokalizację w Ustawieniach aplikacji.",
-  "geo_locator.requesting_location": "Trwa ustalanie Twojej lokalizacji. Proszę czekać."
+  "geo_locator.requesting_location": "Trwa ustalanie Twojej lokalizacji. Proszę czekać.",
+  "search_engine.hint": "Wyszukaj znalezisko"
 }

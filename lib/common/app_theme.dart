@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_template/common/dimens.dart';
 
+const _inputBorder = OutlineInputBorder(
+  borderSide: BorderSide(
+    color: Colors.amber,
+  ),
+);
+
 final appTheme = ThemeData(
   floatingActionButtonTheme: const FloatingActionButtonThemeData(
     foregroundColor: Colors.amber,
@@ -22,5 +28,16 @@ final appTheme = ThemeData(
       foregroundColor: Colors.black,
       minimumSize: const Size(double.infinity, Dimens.buttonSize),
     ),
+  ),
+  inputDecorationTheme: const InputDecorationTheme(
+    labelStyle: TextStyle(
+      color: Colors.black,
+    ),
+    suffixStyle: TextStyle(
+      color: Colors.black,
+    ),
+    focusedBorder: _inputBorder,
+    enabledBorder: _inputBorder,
+    disabledBorder: _inputBorder,
   ),
 );
