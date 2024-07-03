@@ -53,7 +53,7 @@ class _HomePageState extends State<SearchEngineWidget> {
       },
       decoration: InputDecoration(
         filled: true,
-        fillColor: Colors.white.withOpacity(0.7),
+        fillColor: Colors.white.withOpacity(0.8),
         labelText: AppLocaleUtils.of(context).translate('search_engine.hint'),
         prefixIcon: const Icon(Icons.search),
         suffixIcon: _getClearIconWidget(),
@@ -87,7 +87,7 @@ class _HomePageState extends State<SearchEngineWidget> {
           ),
           borderRadius: BorderRadius.all(Radius.circular(2)),
         ),
-        color: Colors.white.withOpacity(0.7),
+        color: Colors.white.withOpacity(0.8),
         child: ListView.builder(
           itemCount: _filteredItems.length,
           itemBuilder: (context, index) {
