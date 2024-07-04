@@ -8,6 +8,24 @@ class FossilsRepository {
   static const String _fossilsCollectionName = 'fossils';
   static const String _imagesPath = 'images';
 
+  CollectionReference<Map<String, dynamic>> get _fossilsCollectionRef {
+    return FirebaseFirestore.instance.collection(_fossilsCollectionName);
+  }
+
+  Future<List<FossilDto>> getFossils() async {
+    final collectionRef = _fossilsCollectionRef.withConverter<FossilDto>(
+      fromFirestore: (snapshot, _) => FossilDto.fromJson(snapshot.data()!),
+      toFirestore: (fossilDto, _) => fossilDto.toJson(),
+    );
+    final querySnapshot = await collectionRef.get();
+    final queryDocsSnapshots = querySnapshot.docs;
+    return queryDocsSnapshots.map((fossilSnapshot) {
+      final fossil = fossilSnapshot.data();
+      fossil.id = fossilSnapshot.id;
+      return fossil;
+    }).toList();
+  }
+
   Future<String> uploadFossilPhoto({
     required XFile? photoFile,
   }) async {
@@ -29,7 +47,5 @@ class FossilsRepository {
   Future<DocumentReference> saveFossil({
     required FossilDto fossilDto,
   }) =>
-      FirebaseFirestore.instance
-          .collection(_fossilsCollectionName)
-          .add(fossilDto.toMap());
+      _fossilsCollectionRef.add(fossilDto.toJson());
 }

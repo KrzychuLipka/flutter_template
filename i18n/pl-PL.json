@@ -1,4 +1,5 @@
 {
+  "map.finds_retrieving_error": "Wystąpił błąd podczas pobierania znalezisk.",
   "new_find.photo": "Zdjęcie znaleziska",
   "new_find.photo_required": "Zdjęcie jest wymagane.",
   "new_find.failed_to_take_photo": "Nie udało się zrobić zdjęcia. Upewnij się, że przydzieliłeś niezbędne uprawnienia.",
@@ -15,5 +16,6 @@
   "geo_locator.locations_permissions_denied": "Bez przydzielenia uprawnień do lokalizacji, nie będzie możliwe pobranie Twojej pozycji.",
   "geo_locator.locations_permissions_denied_forever": "Włącz lokalizację w Ustawieniach aplikacji.",
   "geo_locator.requesting_location": "Trwa ustalanie Twojej lokalizacji. Proszę czekać.",
-  "search_engine.hint": "Wyszukaj znalezisko"
+  "search_engine.hint": "Wyszukaj znalezisko",
+  "search_engine.item_not_found": "Nie znaleziono elementu."
 }

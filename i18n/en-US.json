@@ -1,4 +1,5 @@
 {
+  "map.finds_retrieving_error": "An error occurred while retrieving the finds.",
   "new_find.photo": "Photo of the find",
   "new_find.photo_required": "A photo is required.",
   "new_find.failed_to_take_photo": "Failed to take a picture. Make sure you have assigned the necessary permissions.",
@@ -15,5 +16,6 @@
   "geo_locator.locations_permissions_denied": "Without assigning location permissions, it will not be possible to retrieve your position.",
   "geo_locator.locations_permissions_denied_forever": "Enable location in the App Settings.",
   "geo_locator.requesting_location": "Determination of your location is in progress. Please wait.",
-  "search_engine.hint": "Search for a find"
+  "search_engine.hint": "Search for a find",
+  "search_engine.item_not_found": "Item not found."
 }

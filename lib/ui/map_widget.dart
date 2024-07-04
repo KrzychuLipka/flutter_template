@@ -3,14 +3,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_template/common/consts/map_consts.dart';
 import 'package:flutter_template/common/dimens.dart';
+import 'package:flutter_template/common/utils/toast_utils.dart';
 import 'package:flutter_template/cubit/map/map_cubit.dart';
 import 'package:flutter_template/cubit/new_find/new_find_cubit.dart';
-import 'package:flutter_template/data/model/search_item.dart';
 import 'package:flutter_template/ui/new_find_bottom_sheet.dart';
 import 'package:flutter_template/ui/search_engine_widget.dart';
+import 'package:get_it/get_it.dart';
 
 class MapWidget extends StatelessWidget {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final ToastUtils _toastUtils = GetIt.instance.get<ToastUtils>();
 
   MapWidget({super.key});
 
@@ -18,66 +20,94 @@ class MapWidget extends StatelessWidget {
   Widget build(
     BuildContext context,
   ) {
-    return SafeArea(
-      child: Scaffold(
-        body: _getBodyWidget(),
-        floatingActionButton: _getButtonsWidget(context),
-      ),
-    );
-  }
-
-  Widget _getBodyWidget() {
-    return Stack(
-      children: [
-        _map(),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(
-            Dimens.marginStandard,
-            Dimens.marginStandard,
-            Dimens.marginStandard,
-            86,
-          ),
-          child: SearchEngineWidget(
-            searchItems: [
-              SearchItem(title: 'Znalezisko 1', subTitle: 'Okres 1'),
-              SearchItem(title: 'Znalezisko 2', subTitle: 'Okres 1'),
-              SearchItem(title: 'Znalezisko 3', subTitle: 'Okres 1'),
-              SearchItem(title: 'Znalezisko 4', subTitle: 'Okres 2'),
-              SearchItem(title: 'Znalezisko 5', subTitle: 'Okres 2'),
-              SearchItem(title: 'Znalezisko 6', subTitle: 'Okres 1'),
-              SearchItem(title: 'Znalezisko 7', subTitle: 'Okres 1'),
-              SearchItem(title: 'Znalezisko 8', subTitle: 'Okres 1'),
-              SearchItem(title: 'Znalezisko 9', subTitle: 'Okres 2'),
-              SearchItem(title: 'Znalezisko 10', subTitle: 'Okres 2'),
-              SearchItem(title: 'Znalezisko 11', subTitle: 'Okres 1'),
-              SearchItem(title: 'Znalezisko 12', subTitle: 'Okres 1'),
-              SearchItem(title: 'Znalezisko 13', subTitle: 'Okres 1'),
-              SearchItem(title: 'Znalezisko 14', subTitle: 'Okres 2'),
-              SearchItem(title: 'Znalezisko 15', subTitle: 'Okres 2'),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _map() {
-    return BlocBuilder<MapCubit, MapState>(
+    return BlocConsumer<MapCubit, MapState>(
       builder: (context, state) {
-        return FlutterMap(
-          options: const MapOptions(
-            initialCenter: MapConsts.initialCenter,
-            initialZoom: MapConsts.initialZoom,
-          ),
-          children: [
-            TileLayer(
-              urlTemplate: state.baseMapsInfo
-                  .firstWhere((baseMapInfo) => baseMapInfo.isActive)
-                  .urlTemplate,
-            ),
-          ],
+        final Widget body;
+        if (state is FossilsDownloadingState) {
+          body = _getLoaderWidget();
+        } else {
+          body = _getBodyWidget(context, state);
+        }
+        return SafeArea(
+          child: body,
         );
       },
+      listener: (BuildContext context, MapState state) {
+        if (state is ErrorState) {
+          _toastUtils.showToast(state.errorMessageKey, context);
+        }
+      },
+    );
+  }
+
+  Widget _getLoaderWidget() {
+    return Container(
+      color: Colors.white,
+      alignment: Alignment.center,
+      child: const CircularProgressIndicator(),
+    );
+  }
+
+  Widget _getBodyWidget(
+    BuildContext context,
+    MapState state,
+  ) {
+    return Scaffold(
+      body: Stack(
+        children: [
+          _map(context),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(
+              Dimens.marginStandard,
+              Dimens.marginStandard,
+              Dimens.marginStandard,
+              86,
+            ),
+            child: _getSearchEngineWidget(context, state),
+          ),
+        ],
+      ),
+      floatingActionButton: _getButtonsWidget(context),
+    );
+  }
+
+  Widget _getSearchEngineWidget(
+    BuildContext context,
+    MapState state,
+  ) {
+    if (state is FossilsDownloadingState) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+    return SearchEngineWidget(
+      searchItems: BlocProvider.of<MapCubit>(context).searchItems,
+      itemClickCallback: (searchItem) {
+        // TODO
+        _toastUtils.debugToast(searchItem.id);
+      },
+      itemNotFoundCallback: () {
+        _toastUtils.showToast('search_engine.item_not_found', context);
+      },
+    );
+  }
+
+  Widget _map(
+    BuildContext context,
+  ) {
+    return FlutterMap(
+      options: const MapOptions(
+        initialCenter: MapConsts.initialCenter,
+        initialZoom: MapConsts.initialZoom,
+      ),
+      children: [
+        TileLayer(
+          urlTemplate: BlocProvider.of<MapCubit>(context)
+              .baseMapsInfo
+              .firstWhere((baseMapInfo) => baseMapInfo.isActive)
+              .urlTemplate,
+        ),
+      ],
     );
   }
 
@@ -128,6 +158,8 @@ class MapWidget extends StatelessWidget {
           ),
         );
       },
-    );
+    ).whenComplete(() {
+      BlocProvider.of<MapCubit>(context).downloadFossils();
+    });
   }
 }

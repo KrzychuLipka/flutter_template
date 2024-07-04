@@ -1,9 +1,16 @@
 part of 'map_cubit.dart';
 
-class MapState {
-  final List<BaseMapInfo> baseMapsInfo;
+@immutable
+sealed class MapState {}
 
-  MapState({
-    required this.baseMapsInfo,
+final class FossilsDownloadingState extends MapState {}
+
+final class RefreshState extends MapState {}
+
+final class ErrorState extends MapState {
+  final String errorMessageKey;
+
+  ErrorState({
+    required this.errorMessageKey,
   });
 }
