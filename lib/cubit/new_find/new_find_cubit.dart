@@ -30,10 +30,10 @@ class NewFindCubit extends Cubit<NewFindState> {
   final TextEditingController _discoveryPlaceController =
       TextEditingController();
 
-  XFile? _photoFile = null;
+  XFile? _photoFile;
   String _fossilType = PaleoRepository.fossilTypes.first;
   String _geologicalPeriod = PaleoRepository.geologicalPeriods.first;
-  final Map<String, double> _discoveryPlace = {};
+  final Map<String, dynamic> _discoveryPlace = {};
   String _discoveryDate = '';
 
   NewFindCubit() : super(InitialState());
@@ -102,6 +102,10 @@ class NewFindCubit extends Cubit<NewFindState> {
     ));
     if (_discoveryDate.trim().isEmpty) {
       _discoveryDate = DateTime.now().toIso8601String();
+    }
+    if (_discoveryPlace.isEmpty && _discoveryPlaceController.text.isNotEmpty) {
+      _discoveryPlace[FossilDto.fieldNameDiscoveryPlaceName] =
+          _discoveryPlaceController.text;
     }
     _fossilsRepository
         .uploadFossilPhoto(photoFile: _photoFile)

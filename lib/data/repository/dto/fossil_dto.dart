@@ -8,6 +8,7 @@ class FossilDto {
   static const String fieldNameDiscoveryDate = 'discoveryDate';
   static const String fieldNameLatitude = 'latitude';
   static const String fieldNameLongitude = 'longitude';
+  static const String fieldNameDiscoveryPlaceName = 'name';
   static const String defaultId = '999';
 
   String? id;
