@@ -1,26 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_template/common/utils/app_locale_utils.dart';
-import 'package:flutter_template/data/model/search_item.dart';
+import 'package:flutter_template/data/repository/dto/fossil_dto.dart';
 
-class SearchEngineWidget extends StatefulWidget {
-  final List<SearchItem> searchItems;
-  final Function(SearchItem) itemClickCallback;
+class FossilSearchEngineWidget extends StatefulWidget {
+  final List<FossilDto> fossils;
+  final Function(FossilDto) itemClickCallback;
   final Function? itemNotFoundCallback;
 
-  const SearchEngineWidget({
+  const FossilSearchEngineWidget({
     super.key,
-    required this.searchItems,
+    required this.fossils,
     required this.itemClickCallback,
     this.itemNotFoundCallback,
   });
 
   @override
-  State<SearchEngineWidget> createState() => _HomePageState();
+  State<FossilSearchEngineWidget> createState() => _FossilSearchEngineState();
 }
 
-class _HomePageState extends State<SearchEngineWidget> {
+class _FossilSearchEngineState extends State<FossilSearchEngineWidget> {
   final TextEditingController _textEditingController = TextEditingController();
-  List<SearchItem> _filteredItems = [];
+  List<FossilDto> _filteredFossils = [];
 
   @override
   Widget build(BuildContext context) {
@@ -43,10 +43,10 @@ class _HomePageState extends State<SearchEngineWidget> {
       onChanged: (value) {
         setState(() {
           if (value.trim().isEmpty) {
-            _filteredItems.clear();
+            _filteredFossils.clear();
           } else {
-            _filteredItems = widget.searchItems
-                .where((searchItem) => searchItem.title
+            _filteredFossils = widget.fossils
+                .where((searchItem) => searchItem.findDescription
                     .toLowerCase()
                     .contains(value.toLowerCase()))
                 .toList();
@@ -74,13 +74,7 @@ class _HomePageState extends State<SearchEngineWidget> {
 
   Widget _getClearIconWidget() {
     return IconButton(
-      onPressed: () {
-        FocusScope.of(context).unfocus();
-        _textEditingController.clear();
-        setState(() {
-          _filteredItems.clear();
-        });
-      },
+      onPressed: () => _clear(),
       icon: const Icon(Icons.clear),
     );
   }
@@ -88,7 +82,7 @@ class _HomePageState extends State<SearchEngineWidget> {
   Widget _getResultsWidget(
     BuildContext context,
   ) {
-    if (_filteredItems.isEmpty) return const SizedBox();
+    if (_filteredFossils.isEmpty) return const SizedBox();
     return Expanded(
       child: Card.filled(
         shape: const BeveledRectangleBorder(
@@ -100,19 +94,15 @@ class _HomePageState extends State<SearchEngineWidget> {
         ),
         color: Colors.white.withOpacity(0.8),
         child: ListView.builder(
-          itemCount: _filteredItems.length,
+          itemCount: _filteredFossils.length,
           itemBuilder: (context, index) {
-            final searchItem = _filteredItems[index];
+            final searchItem = _filteredFossils[index];
             return ListTile(
-              title: Text(searchItem.title),
-              subtitle: Text(searchItem.subTitle),
+              title: Text(searchItem.findDescription),
+              subtitle: Text(searchItem.geologicalPeriod),
               onTap: () {
-                FocusScope.of(context).unfocus();
-                _textEditingController.text = searchItem.title;
                 widget.itemClickCallback(searchItem);
-                setState(() {
-                  _filteredItems.clear();
-                });
+                _clear();
               },
             );
           },
@@ -127,18 +117,24 @@ class _HomePageState extends State<SearchEngineWidget> {
     super.dispose();
   }
 
+  void _clear() {
+    FocusScope.of(context).unfocus();
+    _textEditingController.clear();
+    setState(() {
+      _filteredFossils.clear();
+    });
+  }
+
   void _submit(
     String value,
   ) {
-    final itemsFound = _filteredItems.where((item) => item.title == value);
+    final itemsFound =
+        _filteredFossils.where((item) => item.findDescription == value);
     if (itemsFound.isEmpty) {
       widget.itemNotFoundCallback?.call();
-      return;
+    } else {
+      widget.itemClickCallback(itemsFound.first);
+      _clear();
     }
-    FocusScope.of(context).unfocus();
-    widget.itemClickCallback(itemsFound.first);
-    setState(() {
-      _filteredItems.clear();
-    });
   }
 }

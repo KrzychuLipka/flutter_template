@@ -161,10 +161,12 @@ class NewFindBottomSheet extends StatelessWidget {
     required int minLines,
     required int maxLines,
     required TextEditingController textEditingController,
+    bool readOnly = false,
     required BuildContext context,
   }) {
     AppLocaleUtils appLocaleUtils = AppLocaleUtils.of(context);
     return TextFormField(
+      readOnly: readOnly,
       maxLength: maxLength,
       minLines: minLines,
       maxLines: maxLines,
@@ -189,6 +191,7 @@ class NewFindBottomSheet extends StatelessWidget {
       maxLines: _discoveryPlaceLines,
       textEditingController:
           BlocProvider.of<NewFindCubit>(context).discoveryPlaceController,
+      readOnly: true,
       context: context,
     );
   }

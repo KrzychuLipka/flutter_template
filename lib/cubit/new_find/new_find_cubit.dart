@@ -103,10 +103,6 @@ class NewFindCubit extends Cubit<NewFindState> {
     if (_discoveryDate.trim().isEmpty) {
       _discoveryDate = DateTime.now().toIso8601String();
     }
-    if (_discoveryPlace.isEmpty && _discoveryPlaceController.text.isNotEmpty) {
-      _discoveryPlace[FossilDto.fieldNameDiscoveryPlaceName] =
-          _discoveryPlaceController.text;
-    }
     _fossilsRepository
         .uploadFossilPhoto(photoFile: _photoFile)
         .then((photoURL) {

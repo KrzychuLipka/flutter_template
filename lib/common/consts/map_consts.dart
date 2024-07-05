@@ -7,5 +7,6 @@ class MapConsts {
       'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
   static const LatLng initialCenter = LatLng(49.218405, 20.0249624);
   static const double initialZoom = 15;
-  static const double markerSize = 200;
+  static const double markerWidth = 200;
+  static const double markerHeight = 364;
 }

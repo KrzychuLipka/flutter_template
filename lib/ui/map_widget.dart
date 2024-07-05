@@ -6,8 +6,8 @@ import 'package:flutter_template/common/dimens.dart';
 import 'package:flutter_template/common/utils/toast_utils.dart';
 import 'package:flutter_template/cubit/map/map_cubit.dart';
 import 'package:flutter_template/cubit/new_find/new_find_cubit.dart';
+import 'package:flutter_template/ui/fossil_search_engine_widget.dart';
 import 'package:flutter_template/ui/new_find_bottom_sheet.dart';
-import 'package:flutter_template/ui/search_engine_widget.dart';
 import 'package:get_it/get_it.dart';
 import 'package:latlong2/latlong.dart';
 
@@ -81,10 +81,10 @@ class MapWidget extends StatelessWidget {
         child: CircularProgressIndicator(),
       );
     }
-    return SearchEngineWidget(
-      searchItems: BlocProvider.of<MapCubit>(context).searchItems,
+    return FossilSearchEngineWidget(
+      fossils: BlocProvider.of<MapCubit>(context).fossils,
       itemClickCallback: (searchItem) {
-        BlocProvider.of<MapCubit>(context).saveMarkerPosition(searchItem);
+        BlocProvider.of<MapCubit>(context).saveMarkerData(searchItem);
       },
       itemNotFoundCallback: () {
         _toastUtils.showToast('search_engine.item_not_found', context);
@@ -96,12 +96,12 @@ class MapWidget extends StatelessWidget {
     BuildContext context,
     MapState state,
   ) {
-    final markerPosition = BlocProvider.of<MapCubit>(context).markerPosition;
+    final markerData = BlocProvider.of<MapCubit>(context).markerData;
     final LatLng initialCenter;
-    if (markerPosition == null) {
+    if (markerData == null) {
       initialCenter = MapConsts.initialCenter;
     } else {
-      initialCenter = markerPosition;
+      initialCenter = markerData.position;
     }
     return FlutterMap(
       key: GlobalKey(),
@@ -116,20 +116,85 @@ class MapWidget extends StatelessWidget {
               .firstWhere((baseMapInfo) => baseMapInfo.isActive)
               .urlTemplate,
         ),
-        if (markerPosition != null)
+        if (markerData != null)
           MarkerLayer(
             markers: [
               Marker(
-                width: MapConsts.markerSize,
-                height: MapConsts.markerSize,
-                point: markerPosition,
-                child: const Card(
+                rotate: true,
+                width: MapConsts.markerWidth,
+                height: MapConsts.markerHeight,
+                point: markerData.position,
+                child: Card(
                   color: Colors.white,
                   child: Column(
                     children: [
-                      Text('Row 1'),
-                      Text('Row 2'),
-                      Text('Row 3'),
+                      Row(
+                        children: [
+                          Expanded(
+                            flex: 2,
+                            child: Padding(
+                              padding: const EdgeInsets.fromLTRB(
+                                Dimens.marginStandard,
+                                Dimens.marginStandard,
+                                0,
+                                Dimens.marginStandard,
+                              ),
+                              child: Text(
+                                markerData.row1,
+                                maxLines: 1,
+                                style: Theme.of(context).textTheme.bodyLarge,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            flex: 1,
+                            child: IconButton(
+                              onPressed: () {
+                                BlocProvider.of<MapCubit>(context)
+                                    .clearMarkerData();
+                              },
+                              icon: const Icon(Icons.close),
+                            ),
+                          )
+                        ],
+                      ),
+                      Image.network(
+                        markerData.photoURL,
+                        width: MapConsts.markerWidth,
+                        height: MapConsts.markerWidth,
+                        fit: BoxFit.cover,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(
+                          Dimens.marginStandard,
+                          Dimens.marginStandard,
+                          Dimens.marginStandard,
+                          Dimens.marginSmall,
+                        ),
+                        child: Text(
+                          textAlign: TextAlign.center,
+                          markerData.row2,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(
+                          Dimens.marginStandard,
+                          Dimens.marginSmall,
+                          Dimens.marginStandard,
+                          Dimens.marginStandard,
+                        ),
+                        child: Text(
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.center,
+                          markerData.row3,
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                      ),
                     ],
                   ),
                 ),

@@ -3,8 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_template/common/consts/map_consts.dart';
 import 'package:flutter_template/common/utils/logger.dart';
 import 'package:flutter_template/data/model/base_map_info.dart';
-import 'package:flutter_template/data/model/map_position.dart';
-import 'package:flutter_template/data/model/search_item.dart';
+import 'package:flutter_template/data/model/marker_data.dart';
 import 'package:flutter_template/data/repository/dto/fossil_dto.dart';
 import 'package:flutter_template/data/repository/fossils_repository.dart';
 import 'package:get_it/get_it.dart';
@@ -27,11 +26,11 @@ class MapCubit extends Cubit<MapState> {
     ),
   ];
 
-  List<SearchItem> get searchItems => _searchItems;
-  List<SearchItem> _searchItems = [];
+  List<FossilDto> get fossils => _fossils;
+  List<FossilDto> _fossils = [];
 
-  LatLng? get markerPosition => _markerPosition;
-  LatLng? _markerPosition;
+  MarkerData? get markerData => _markerData;
+  MarkerData? _markerData;
 
   MapCubit() : super(FossilsDownloadingState()) {
     downloadFossils();
@@ -40,19 +39,7 @@ class MapCubit extends Cubit<MapState> {
   void downloadFossils() async {
     emit(FossilsDownloadingState());
     try {
-      final fossils = await _fossilsRepository.getFossils();
-      _searchItems = fossils.map((fossil) {
-        return SearchItem(
-          id: fossil.id ?? FossilDto.defaultId,
-          title: fossil.findDescription,
-          subTitle: fossil.geologicalPeriod,
-          mapPosition: MapPosition(
-            latitude: fossil.discoveryPlace[FossilDto.fieldNameLatitude],
-            longitude: fossil.discoveryPlace[FossilDto.fieldNameLongitude],
-            name: fossil.discoveryPlace[FossilDto.fieldNameDiscoveryPlaceName],
-          ),
-        );
-      }).toList();
+      _fossils = await _fossilsRepository.getFossils();
       emit(RefreshState());
     } catch (error) {
       _handleError(
@@ -84,14 +71,27 @@ class MapCubit extends Cubit<MapState> {
     emit(RefreshState());
   }
 
-  void saveMarkerPosition(
-    SearchItem searchItem,
+  void saveMarkerData(
+    FossilDto fossilDto,
   ) {
-    final mapPosition = searchItem.mapPosition;
-    final longitude = mapPosition.longitude;
-    final latitude = mapPosition.latitude;
+    final discoveryPlace = fossilDto.discoveryPlace;
+    final longitude = discoveryPlace[FossilDto.fieldNameLongitude];
+    final latitude = discoveryPlace[FossilDto.fieldNameLatitude];
     if (latitude == null || longitude == null) return;
-    _markerPosition = LatLng(latitude, longitude);
+    _markerData = MarkerData(
+      position: LatLng(latitude, longitude),
+      photoURL: fossilDto.photoURL,
+      row1: fossilDto.findDescription,
+      row2: fossilDto.fossilType,
+      row3: fossilDto.geologicalPeriod,
+    );
     emit(RefreshState());
+  }
+
+  void clearMarkerData() {
+    if (_markerData != null) {
+      _markerData = null;
+      emit(RefreshState());
+    }
   }
 }
