@@ -9,6 +9,7 @@ import 'package:flutter_template/cubit/new_find/new_find_cubit.dart';
 import 'package:flutter_template/ui/new_find_bottom_sheet.dart';
 import 'package:flutter_template/ui/search_engine_widget.dart';
 import 'package:get_it/get_it.dart';
+import 'package:latlong2/latlong.dart';
 
 class MapWidget extends StatelessWidget {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -55,7 +56,7 @@ class MapWidget extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
-          _map(context),
+          _map(context, state),
           Padding(
             padding: const EdgeInsets.fromLTRB(
               Dimens.marginStandard,
@@ -83,8 +84,7 @@ class MapWidget extends StatelessWidget {
     return SearchEngineWidget(
       searchItems: BlocProvider.of<MapCubit>(context).searchItems,
       itemClickCallback: (searchItem) {
-        // TODO
-        _toastUtils.debugToast(searchItem.id);
+        BlocProvider.of<MapCubit>(context).saveMarkerPosition(searchItem);
       },
       itemNotFoundCallback: () {
         _toastUtils.showToast('search_engine.item_not_found', context);
@@ -94,10 +94,19 @@ class MapWidget extends StatelessWidget {
 
   Widget _map(
     BuildContext context,
+    MapState state,
   ) {
+    final markerPosition = BlocProvider.of<MapCubit>(context).markerPosition;
+    final LatLng initialCenter;
+    if (markerPosition == null) {
+      initialCenter = MapConsts.initialCenter;
+    } else {
+      initialCenter = markerPosition;
+    }
     return FlutterMap(
-      options: const MapOptions(
-        initialCenter: MapConsts.initialCenter,
+      key: GlobalKey(),
+      options: MapOptions(
+        initialCenter: initialCenter,
         initialZoom: MapConsts.initialZoom,
       ),
       children: [
@@ -107,6 +116,26 @@ class MapWidget extends StatelessWidget {
               .firstWhere((baseMapInfo) => baseMapInfo.isActive)
               .urlTemplate,
         ),
+        if (markerPosition != null)
+          MarkerLayer(
+            markers: [
+              Marker(
+                width: MapConsts.markerSize,
+                height: MapConsts.markerSize,
+                point: markerPosition,
+                child: const Card(
+                  color: Colors.white,
+                  child: Column(
+                    children: [
+                      Text('Row 1'),
+                      Text('Row 2'),
+                      Text('Row 3'),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
       ],
     );
   }
