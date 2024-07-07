@@ -27,7 +27,8 @@ class _DropdownWidgetState extends State<DropdownWidget> {
       value: _selectedValue,
       icon: const Icon(Icons.arrow_drop_down),
       elevation: Dimens.elevationStandard,
-      style: const TextStyle(color: Colors.black),
+      style:
+          Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.black),
       onChanged: (String? value) {
         widget.valueChangeCallback('$value');
         setState(() {

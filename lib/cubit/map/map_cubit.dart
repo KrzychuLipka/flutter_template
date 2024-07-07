@@ -32,7 +32,10 @@ class MapCubit extends Cubit<MapState> {
   MarkerData? get markerData => _markerData;
   MarkerData? _markerData;
 
-  MapCubit() : super(FossilsDownloadingState()) {
+  LatLng get initialPoint => _initialPoint;
+  LatLng _initialPoint = MapConsts.initialCenter;
+
+  MapCubit() : super(MapInitialState()) {
     downloadFossils();
   }
 
@@ -40,25 +43,13 @@ class MapCubit extends Cubit<MapState> {
     emit(FossilsDownloadingState());
     try {
       _fossils = await _fossilsRepository.getFossils();
-      emit(RefreshState());
+      emit(MapInitialState());
     } catch (error) {
-      _handleError(
-        error: error,
-        errorMessageKey: 'map.finds_retrieving_error',
-      );
-    }
-  }
-
-  void _handleError({
-    dynamic error,
-    required String errorMessageKey,
-  }) {
-    if (error != null) {
       Logger.d('$error');
+      emit(ErrorState(
+        errorMessageKey: 'map.finds_retrieving_error',
+      ));
     }
-    emit(ErrorState(
-      errorMessageKey: errorMessageKey,
-    ));
   }
 
   void toggleBaseMap() {
@@ -68,7 +59,7 @@ class MapCubit extends Cubit<MapState> {
     int nextActiveBaseMapIndex =
         (prevActiveBaseMapIndex + 1) % _baseMapsInfo.length;
     _baseMapsInfo[nextActiveBaseMapIndex].isActive = true;
-    emit(RefreshState());
+    emit(MapInitialState());
   }
 
   void saveMarkerData(
@@ -85,13 +76,14 @@ class MapCubit extends Cubit<MapState> {
       row2: fossilDto.fossilType,
       row3: fossilDto.geologicalPeriod,
     );
-    emit(RefreshState());
+    emit(MapInitialState());
   }
 
   void clearMarkerData() {
     if (_markerData != null) {
+      _initialPoint = _markerData!.position;
       _markerData = null;
-      emit(RefreshState());
+      emit(MapInitialState());
     }
   }
 }

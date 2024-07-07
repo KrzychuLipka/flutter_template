@@ -111,12 +111,6 @@ class _FossilSearchEngineState extends State<FossilSearchEngineWidget> {
     );
   }
 
-  @override
-  void dispose() {
-    _textEditingController.dispose();
-    super.dispose();
-  }
-
   void _clear() {
     FocusScope.of(context).unfocus();
     _textEditingController.clear();
@@ -136,5 +130,11 @@ class _FossilSearchEngineState extends State<FossilSearchEngineWidget> {
       widget.itemClickCallback(itemsFound.first);
       _clear();
     }
+  }
+
+  @override
+  void dispose() {
+    _textEditingController.dispose();
+    super.dispose();
   }
 }

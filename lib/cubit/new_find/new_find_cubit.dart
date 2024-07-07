@@ -36,15 +36,17 @@ class NewFindCubit extends Cubit<NewFindState> {
   final Map<String, dynamic> _discoveryPlace = {};
   String _discoveryDate = '';
 
-  NewFindCubit() : super(InitialState());
+  String get photoPath => _photoPath;
+  String _photoPath = '';
+
+  NewFindCubit() : super(NewFindInitialState());
 
   void savePhoto(
     XFile photoFile,
   ) {
     _photoFile = photoFile;
-    emit(PhotoTakenState(
-      photoPath: photoFile.path,
-    ));
+    _photoPath = photoFile.path;
+    emit(NewFindRefreshingState());
   }
 
   void saveFossilType(
@@ -97,9 +99,7 @@ class NewFindCubit extends Cubit<NewFindState> {
   void saveFind(
     BuildContext context,
   ) {
-    emit(FindSavingState(
-      savingInProgress: true,
-    ));
+    emit(FindSavingState());
     if (_discoveryDate.trim().isEmpty) {
       _discoveryDate = DateTime.now().toIso8601String();
     }
@@ -117,14 +117,12 @@ class NewFindCubit extends Cubit<NewFindState> {
       _fossilsRepository.saveFossil(fossilDto: fossilDto).catchError((error) {
         Logger.d('Failed to save fossil: $error');
         _toastUtils.showToast('new_find.save_error', context);
+        emit(NewFindInitialState());
         return error;
       }).then((result) {
         Logger.d('Fossil saved with id=${result.id}');
         _toastUtils.showToast('new_find.save_success', context);
-      }).whenComplete(() {
-        emit(FindSavingState(
-          savingInProgress: false,
-        ));
+        emit(FindSavedState());
       });
     });
   }

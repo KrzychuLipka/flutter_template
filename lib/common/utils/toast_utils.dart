@@ -22,22 +22,4 @@ class ToastUtils {
       fontSize: fontSize,
     );
   }
-
-  void debugToast(
-    String msg, {
-        Toast? toastLength = Toast.LENGTH_SHORT,
-        ToastGravity? gravity = ToastGravity.CENTER,
-        Color? backgroundColor = Colors.black,
-        Color? textColor = Colors.white,
-        double? fontSize = Dimens.fontSizeStandard,
-      }) {
-    Fluttertoast.showToast(
-      msg: msg,
-      toastLength: toastLength,
-      gravity: gravity,
-      backgroundColor: backgroundColor,
-      textColor: textColor,
-      fontSize: fontSize,
-    );
-  }
 }

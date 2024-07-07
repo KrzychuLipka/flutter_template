@@ -42,15 +42,16 @@ class NewFindBottomSheet extends StatelessWidget {
           key: formKey,
           child: BlocConsumer<NewFindCubit, NewFindState>(
             builder: (context, state) {
+              final cubit = BlocProvider.of<NewFindCubit>(context);
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: Dimens.marginStandard),
-                  _getCloseButton(context),
+                  _getCloseButtonWidget(context),
                   const SizedBox(height: Dimens.marginSmall),
                   Text(appLocaleUtils.translate('new_find.photo')),
-                  if (state is PhotoTakenState)
-                    _getPhotoWidget(state.photoPath),
+                  if (state is NewFindRefreshingState)
+                    _getPhotoWidget(cubit.photoPath),
                   const SizedBox(height: Dimens.marginStandard),
                   _getCameraFabWidget(context),
                   const SizedBox(height: Dimens.marginStandard),
@@ -65,9 +66,9 @@ class NewFindBottomSheet extends StatelessWidget {
                   _getDiscoveryPlaceWidget(context),
                   const SizedBox(height: Dimens.marginStandard),
                   Text(appLocaleUtils.translate('new_find.discovery_date')),
-                  _getDatePickerWidget(context),
+                  _getDatePickerWidget(cubit),
                   const SizedBox(height: Dimens.marginDouble),
-                  _getSaveFindWidget(
+                  _getSaveFindButtonWidget(
                     context: context,
                     state: state,
                   ),
@@ -75,7 +76,7 @@ class NewFindBottomSheet extends StatelessWidget {
               );
             },
             listener: (BuildContext context, NewFindState state) {
-              if (state is FindSavingState && !state.savingInProgress) {
+              if (state is FindSavedState) {
                 Navigator.pop(context);
               }
             },
@@ -196,7 +197,7 @@ class NewFindBottomSheet extends StatelessWidget {
     );
   }
 
-  Widget _getCloseButton(
+  Widget _getCloseButtonWidget(
     BuildContext context,
   ) {
     return Align(
@@ -237,17 +238,6 @@ class NewFindBottomSheet extends StatelessWidget {
     );
   }
 
-  FormFieldValidator<String> _getFormFieldValidator(
-    AppLocaleUtils appLocaleUtils,
-  ) {
-    return (value) {
-      if (value == null || value.isEmpty) {
-        return appLocaleUtils.translate('form.required_field');
-      }
-      return null;
-    };
-  }
-
   Widget _getCameraFabWidget(
     BuildContext context,
   ) {
@@ -260,7 +250,7 @@ class NewFindBottomSheet extends StatelessWidget {
   }
 
   Widget _getDatePickerWidget(
-    BuildContext context,
+    NewFindCubit cubit,
   ) {
     return Center(
       child: SizedBox(
@@ -286,8 +276,7 @@ class NewFindBottomSheet extends StatelessWidget {
           minDate: DateTime(2024, 1, 1),
           maxDate: DateTime(2100, 1, 1),
           onDateSelected: (dateTime) {
-            BlocProvider.of<NewFindCubit>(context)
-                .saveDiscoveryDate(dateTime.toIso8601String());
+            cubit.saveDiscoveryDate(dateTime.toIso8601String());
             // Handle selected date
           },
         ),
@@ -295,29 +284,41 @@ class NewFindBottomSheet extends StatelessWidget {
     );
   }
 
-  Widget _getSaveFindWidget({
+  Widget _getSaveFindButtonWidget({
     required BuildContext context,
     required NewFindState state,
   }) {
-    if (state is FindSavingState && state.savingInProgress) {
+    if (state is FindSavingState) {
       return const Center(
         child: CircularProgressIndicator(),
       );
     }
+    final cubit = BlocProvider.of<NewFindCubit>(context);
     return ElevatedButton(
       onPressed: () {
-        if (!BlocProvider.of<NewFindCubit>(context).isPhotoSaved()) {
+        if (!cubit.isPhotoSaved()) {
           _toastUtils.showToast('new_find.photo_required', context);
           return;
         }
         if (formKey.currentState?.validate() == true) {
-          BlocProvider.of<NewFindCubit>(context).saveFind(context);
+          cubit.saveFind(context);
         }
       },
       child: Text(
         AppLocaleUtils.of(context).translate('new_find.save_find'),
       ),
     );
+  }
+
+  FormFieldValidator<String> _getFormFieldValidator(
+    AppLocaleUtils appLocaleUtils,
+  ) {
+    return (value) {
+      if (value == null || value.isEmpty) {
+        return appLocaleUtils.translate('form.required_field');
+      }
+      return null;
+    };
   }
 
   void _openCamera(
