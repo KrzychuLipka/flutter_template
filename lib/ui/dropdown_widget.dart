@@ -16,23 +16,25 @@ class DropdownWidget extends StatefulWidget {
 }
 
 class _DropdownWidgetState extends State<DropdownWidget> {
-  String _selectedValue = '';
+  late String _selectedValue;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedValue = widget.data.first;
+  }
 
   @override
   Widget build(BuildContext context) {
-    if (_selectedValue.trim().isEmpty) {
-      _selectedValue = widget.data.first;
-    }
     return DropdownButton<String>(
       value: _selectedValue,
       icon: const Icon(Icons.arrow_drop_down),
       elevation: Dimens.elevationStandard,
-      style:
-          Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.black),
+      style: const TextStyle(color: Colors.black),
       onChanged: (String? value) {
-        widget.valueChangeCallback('$value');
+        widget.valueChangeCallback(value ?? '');
         setState(() {
-          _selectedValue = '$value';
+          _selectedValue = value ?? '';
         });
       },
       items: widget.data.map<DropdownMenuItem<String>>((String value) {
