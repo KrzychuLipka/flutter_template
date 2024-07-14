@@ -1,13 +1,13 @@
 import 'package:bloc/bloc.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_template/common/utils/geo_locator_utils.dart';
-import 'package:flutter_template/common/utils/logger.dart';
-import 'package:flutter_template/common/utils/toast_utils.dart';
-import 'package:flutter_template/data/model/error.dart';
-import 'package:flutter_template/data/repository/dto/fossil_dto.dart';
-import 'package:flutter_template/data/repository/fossils_repository.dart';
-import 'package:flutter_template/data/repository/paleo_repository.dart';
+import 'package:geo_app/common/utils/geo_locator_utils.dart';
+import 'package:geo_app/common/utils/logger.dart';
+import 'package:geo_app/common/utils/toast_utils.dart';
+import 'package:geo_app/data/model/error.dart';
+import 'package:geo_app/data/repository/dto/fossil_dto.dart';
+import 'package:geo_app/data/repository/fossils_repository.dart';
+import 'package:geo_app/data/repository/paleo_repository.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get_it/get_it.dart';
 

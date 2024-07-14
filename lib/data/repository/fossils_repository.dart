@@ -1,8 +1,8 @@
 import 'package:camera/camera.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter_template/common/utils/logger.dart';
-import 'package:flutter_template/data/repository/dto/fossil_dto.dart';
+import 'package:geo_app/common/utils/logger.dart';
+import 'package:geo_app/data/repository/dto/fossil_dto.dart';
 
 class FossilsRepository {
   static const String _fossilsCollectionName = 'fossils';

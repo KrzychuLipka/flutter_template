@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_template/common/dimens.dart';
+import 'package:geo_app/common/dimens.dart';
 
 class DropdownWidget extends StatefulWidget {
   final List<String> data;
@@ -30,7 +30,10 @@ class _DropdownWidgetState extends State<DropdownWidget> {
       value: _selectedValue,
       icon: const Icon(Icons.arrow_drop_down),
       elevation: Dimens.elevationStandard,
-      style: const TextStyle(color: Colors.black),
+      style: const TextStyle(
+        color: Colors.black,
+        fontSize: Dimens.fontSizeSmall,
+      ),
       onChanged: (String? value) {
         widget.valueChangeCallback(value ?? '');
         setState(() {

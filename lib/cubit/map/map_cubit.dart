@@ -1,11 +1,11 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_template/common/consts/map_consts.dart';
-import 'package:flutter_template/common/utils/logger.dart';
-import 'package:flutter_template/data/model/base_map_info.dart';
-import 'package:flutter_template/data/model/marker_data.dart';
-import 'package:flutter_template/data/repository/dto/fossil_dto.dart';
-import 'package:flutter_template/data/repository/fossils_repository.dart';
+import 'package:geo_app/common/consts/map_consts.dart';
+import 'package:geo_app/common/utils/logger.dart';
+import 'package:geo_app/data/model/base_map_info.dart';
+import 'package:geo_app/data/model/marker_data.dart';
+import 'package:geo_app/data/repository/dto/fossil_dto.dart';
+import 'package:geo_app/data/repository/fossils_repository.dart';
 import 'package:get_it/get_it.dart';
 import 'package:latlong2/latlong.dart';
 

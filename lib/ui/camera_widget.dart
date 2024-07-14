@@ -1,8 +1,8 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_template/common/dimens.dart';
-import 'package:flutter_template/common/utils/logger.dart';
-import 'package:flutter_template/common/utils/toast_utils.dart';
+import 'package:geo_app/common/dimens.dart';
+import 'package:geo_app/common/utils/logger.dart';
+import 'package:geo_app/common/utils/toast_utils.dart';
 import 'package:get_it/get_it.dart';
 
 class CameraWidget extends StatelessWidget {

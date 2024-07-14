@@ -1,5 +1,5 @@
-import 'package:flutter_template/common/utils/logger.dart';
-import 'package:flutter_template/data/model/error.dart';
+import 'package:geo_app/common/utils/logger.dart';
+import 'package:geo_app/data/model/error.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 

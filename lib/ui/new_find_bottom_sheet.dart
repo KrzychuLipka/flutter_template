@@ -4,13 +4,13 @@ import 'package:camera/camera.dart';
 import 'package:date_picker_plus/date_picker_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_template/common/dimens.dart';
-import 'package:flutter_template/common/utils/app_locale_utils.dart';
-import 'package:flutter_template/common/utils/toast_utils.dart';
-import 'package:flutter_template/cubit/new_find/new_find_cubit.dart';
-import 'package:flutter_template/data/repository/paleo_repository.dart';
-import 'package:flutter_template/ui/camera_widget.dart';
-import 'package:flutter_template/ui/dropdown_widget.dart';
+import 'package:geo_app/common/dimens.dart';
+import 'package:geo_app/common/utils/app_locale_utils.dart';
+import 'package:geo_app/common/utils/toast_utils.dart';
+import 'package:geo_app/cubit/new_find/new_find_cubit.dart';
+import 'package:geo_app/data/repository/paleo_repository.dart';
+import 'package:geo_app/ui/camera_widget.dart';
+import 'package:geo_app/ui/dropdown_widget.dart';
 import 'package:get_it/get_it.dart';
 
 class NewFindBottomSheet extends StatelessWidget {

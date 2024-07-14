@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_template/common/utils/app_locale_utils.dart';
-import 'package:flutter_template/data/repository/dto/fossil_dto.dart';
+import 'package:geo_app/common/utils/app_locale_utils.dart';
+import 'package:geo_app/data/repository/dto/fossil_dto.dart';
 
 class FossilSearchEngineWidget extends StatefulWidget {
   final List<FossilDto> fossils;

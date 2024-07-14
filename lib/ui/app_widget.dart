@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:flutter_template/common/app_theme.dart';
-import 'package:flutter_template/common/utils/app_locale_utils.dart';
-import 'package:flutter_template/cubit/map/map_cubit.dart';
-import 'package:flutter_template/ui/map_widget.dart';
+import 'package:geo_app/common/app_theme.dart';
+import 'package:geo_app/common/utils/app_locale_utils.dart';
+import 'package:geo_app/cubit/map/map_cubit.dart';
+import 'package:geo_app/ui/map_widget.dart';
 
 class AppWidget extends StatelessWidget {
   const AppWidget({super.key});

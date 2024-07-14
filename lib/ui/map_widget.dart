@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:flutter_template/common/consts/map_consts.dart';
-import 'package:flutter_template/common/dimens.dart';
-import 'package:flutter_template/common/utils/toast_utils.dart';
-import 'package:flutter_template/cubit/map/map_cubit.dart';
-import 'package:flutter_template/cubit/new_find/new_find_cubit.dart';
-import 'package:flutter_template/data/model/marker_data.dart';
-import 'package:flutter_template/ui/fossil_search_engine_widget.dart';
-import 'package:flutter_template/ui/new_find_bottom_sheet.dart';
+import 'package:geo_app/common/consts/map_consts.dart';
+import 'package:geo_app/common/dimens.dart';
+import 'package:geo_app/common/utils/toast_utils.dart';
+import 'package:geo_app/cubit/map/map_cubit.dart';
+import 'package:geo_app/cubit/new_find/new_find_cubit.dart';
+import 'package:geo_app/data/model/marker_data.dart';
+import 'package:geo_app/ui/fossil_search_engine_widget.dart';
+import 'package:geo_app/ui/new_find_bottom_sheet.dart';
 import 'package:get_it/get_it.dart';
 import 'package:latlong2/latlong.dart';
 

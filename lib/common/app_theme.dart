@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_template/common/dimens.dart';
+import 'package:geo_app/common/dimens.dart';
 
 const _inputBorder = OutlineInputBorder(
   borderSide: BorderSide(

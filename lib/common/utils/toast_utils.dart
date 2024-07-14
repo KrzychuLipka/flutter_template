@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_template/common/dimens.dart';
-import 'package:flutter_template/common/utils/app_locale_utils.dart';
+import 'package:geo_app/common/dimens.dart';
+import 'package:geo_app/common/utils/app_locale_utils.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class ToastUtils {
