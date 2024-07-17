@@ -3,127 +3,123 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geo_app/common/consts/map_consts.dart';
 import 'package:geo_app/common/dimens.dart';
+import 'package:geo_app/common/utils/logger.dart';
 import 'package:geo_app/common/utils/toast_utils.dart';
 import 'package:geo_app/cubit/map/map_cubit.dart';
 import 'package:geo_app/cubit/new_find/new_find_cubit.dart';
+import 'package:geo_app/data/model/error.dart';
 import 'package:geo_app/data/model/marker_data.dart';
 import 'package:geo_app/ui/fossil_search_engine_widget.dart';
 import 'package:geo_app/ui/new_find_bottom_sheet.dart';
 import 'package:get_it/get_it.dart';
-import 'package:latlong2/latlong.dart';
 
 class MapWidget extends StatelessWidget {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
   final ToastUtils _toastUtils = GetIt.instance.get<ToastUtils>();
 
   MapWidget({super.key});
 
   @override
-  Widget build(
-    BuildContext context,
-  ) {
+  Widget build(BuildContext context) {
     return BlocConsumer<MapCubit, MapState>(
-      builder: (context, state) {
-        final Widget body;
-        if (state is FossilsDownloadingState) {
-          body = _getLoaderWidget();
-        } else {
-          body = _getBodyWidget(context, state);
-        }
-        return SafeArea(
-          child: body,
-        );
-      },
+      builder: (context, state) => _getBodyWidget(context),
       listener: (BuildContext context, MapState state) {
-        if (state is ErrorState) {
-          _toastUtils.showToast(state.errorMessageKey, context);
-        }
+        Logger.d('Current state: $state');
       },
-    );
-  }
-
-  Widget _getLoaderWidget() {
-    return Container(
-      color: Colors.white,
-      alignment: Alignment.center,
-      child: const CircularProgressIndicator(),
     );
   }
 
   Widget _getBodyWidget(
     BuildContext context,
-    MapState state,
   ) {
-    return Scaffold(
-      body: Stack(
-        children: [
-          _getMapWidget(context, state),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(
-              Dimens.marginStandard,
-              Dimens.marginStandard,
-              Dimens.marginStandard,
-              86,
+    return SafeArea(
+      child: Scaffold(
+        body: Stack(
+          children: [
+            _getMapWidget(context),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(
+                Dimens.marginStandard,
+                Dimens.marginStandard,
+                Dimens.marginStandard,
+                86,
+              ),
+              child: _getSearchEngineWidget(context),
             ),
-            child: _getSearchEngineWidget(context, state),
-          ),
-        ],
+          ],
+        ),
+        floatingActionButton: _getButtonsWidget(context),
       ),
-      floatingActionButton: _getButtonsWidget(context),
     );
   }
 
   Widget _getSearchEngineWidget(
     BuildContext context,
-    MapState state,
   ) {
-    if (state is FossilsDownloadingState) {
-      return const Center(
-        child: CircularProgressIndicator(),
-      );
-    }
-    final mapCubit = BlocProvider.of<MapCubit>(context);
-    return FossilSearchEngineWidget(
-      fossils: mapCubit.fossils,
-      itemClickCallback: (searchItem) {
-        mapCubit.saveMarkerData(searchItem);
-      },
-      itemNotFoundCallback: () {
-        _toastUtils.showToast('search_engine.item_not_found', context);
-      },
-    );
+    return StreamBuilder(
+        stream: BlocProvider.of<MapCubit>(context).fossilsStream,
+        builder: (context, snapshot) {
+          if (snapshot.hasError && snapshot.error is GeneralError) {
+            final error = snapshot.error as GeneralError;
+            Logger.d(error.technicalMsg);
+            _toastUtils.showToast(error.msgKey, context);
+            return const SizedBox();
+          }
+          if (!snapshot.hasData) {
+            return const Align(
+              alignment: Alignment.center,
+              child: CircularProgressIndicator(),
+            );
+          }
+          final cubit = BlocProvider.of<MapCubit>(context);
+          return FossilSearchEngineWidget(
+            fossils: snapshot.data ?? [],
+            itemClickCallback: (searchItem) {
+              cubit.saveMarkerData(searchItem);
+            },
+            itemNotFoundCallback: () {
+              _toastUtils.showToast('search_engine.item_not_found', context);
+            },
+          );
+        });
   }
 
   Widget _getMapWidget(
     BuildContext context,
-    MapState state,
   ) {
-    final mapCubit = BlocProvider.of<MapCubit>(context);
-    final markerData = mapCubit.markerData;
-    final LatLng initialCenter;
-    if (markerData == null) {
-      initialCenter = mapCubit.initialPoint;
-    } else {
-      initialCenter = markerData.position;
-    }
-    return FlutterMap(
-      key: GlobalKey(),
-      options: MapOptions(
-        initialCenter: initialCenter,
-        initialZoom: MapConsts.initialZoom,
+    final bloc = BlocProvider.of<MapCubit>(context);
+    return StreamBuilder(
+        stream: bloc.markerDataStream,
+        builder: (context, snapshot) {
+          final markerData = snapshot.data;
+          return FlutterMap(
+            key: GlobalKey(),
+            options: MapOptions(
+              initialCenter: bloc.getMapInitialPoint(),
+              initialZoom: MapConsts.initialZoom,
+            ),
+            children: [
+              _getBaseMapLayer(context),
+              if (markerData != null)
+                _getMarkerWidget(
+                  markerData: markerData,
+                  context: context,
+                ),
+            ],
+          );
+        });
+  }
+
+  Widget _getBaseMapLayer(
+    BuildContext context,
+  ) {
+    return StreamBuilder(
+      stream: BlocProvider.of<MapCubit>(context).mapUrlTemplateStream,
+      initialData: MapConsts.openTopoMapTemplate,
+      builder: (context, snapshot) => TileLayer(
+        urlTemplate: snapshot.data,
       ),
-      children: [
-        TileLayer(
-          urlTemplate: mapCubit.baseMapsInfo
-              .firstWhere((baseMapInfo) => baseMapInfo.isActive)
-              .urlTemplate,
-        ),
-        if (markerData != null)
-          _getMarkerWidget(
-            markerData: markerData,
-            context: context,
-          ),
-      ],
     );
   }
 
@@ -262,20 +258,21 @@ class MapWidget extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        _getToggleBaseMapButtonWidget(BlocProvider.of<MapCubit>(context)),
+        _getToggleBaseMapButtonWidget(context),
         _getReportNewFindButtonWidget(context),
       ],
     );
   }
 
   Widget _getToggleBaseMapButtonWidget(
-    MapCubit mapCubit,
+    BuildContext context,
   ) {
     return Padding(
       padding: const EdgeInsets.only(left: Dimens.marginDouble),
       child: FloatingActionButton(
+        heroTag: 'mapTypes',
         child: const Icon(Icons.layers_outlined),
-        onPressed: () => mapCubit.toggleBaseMap(),
+        onPressed: () => BlocProvider.of<MapCubit>(context).toggleBaseMap(),
       ),
     );
   }
@@ -284,6 +281,7 @@ class MapWidget extends StatelessWidget {
     BuildContext context,
   ) {
     return FloatingActionButton(
+      heroTag: 'addFossil',
       child: const Icon(Icons.add),
       onPressed: () => _showNewFindBottomSheet(context),
     );

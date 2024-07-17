@@ -1,4 +1,4 @@
-sealed class GeneralError {
+class GeneralError {
   final String _msgKey;
   final String _technicalMsg;
 

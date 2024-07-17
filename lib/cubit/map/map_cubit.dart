@@ -1,8 +1,10 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:geo_app/common/consts/map_consts.dart';
-import 'package:geo_app/common/utils/logger.dart';
 import 'package:geo_app/data/model/base_map_info.dart';
+import 'package:geo_app/data/model/error.dart';
 import 'package:geo_app/data/model/marker_data.dart';
 import 'package:geo_app/data/repository/dto/fossil_dto.dart';
 import 'package:geo_app/data/repository/fossils_repository.dart';
@@ -14,8 +16,6 @@ part 'map_state.dart';
 class MapCubit extends Cubit<MapState> {
   final FossilsRepository _fossilsRepository =
       GetIt.instance.get<FossilsRepository>();
-
-  List<BaseMapInfo> get baseMapsInfo => _baseMapsInfo;
   final List<BaseMapInfo> _baseMapsInfo = [
     BaseMapInfo(
       urlTemplate: MapConsts.openTopoMapTemplate,
@@ -25,29 +25,41 @@ class MapCubit extends Cubit<MapState> {
       urlTemplate: MapConsts.osmMapTemplate,
     ),
   ];
+  final _fossilsStreamController =
+      StreamController<List<FossilDto>>.broadcast();
+  final _markerDataStreamController = StreamController<MarkerData?>.broadcast();
+  final _mapUrlTemplateStreamController = StreamController<String>.broadcast();
 
-  List<FossilDto> get fossils => _fossils;
-  List<FossilDto> _fossils = [];
+  StreamSink<String> get _mapUrlTemplateSink =>
+      _mapUrlTemplateStreamController.sink;
 
-  MarkerData? get markerData => _markerData;
+  StreamSink<MarkerData?> get _markerDataSink =>
+      _markerDataStreamController.sink;
+
+  StreamSink<List<FossilDto>> get _fossilsSink => _fossilsStreamController.sink;
+
+  Stream<String> get mapUrlTemplateStream =>
+      _mapUrlTemplateStreamController.stream;
+
+  Stream<MarkerData?> get markerDataStream =>
+      _markerDataStreamController.stream;
+
+  Stream<List<FossilDto>> get fossilsStream => _fossilsStreamController.stream;
+
   MarkerData? _markerData;
-
-  LatLng get initialPoint => _initialPoint;
-  LatLng _initialPoint = MapConsts.initialCenter;
 
   MapCubit() : super(MapInitialState()) {
     downloadFossils();
   }
 
   void downloadFossils() async {
-    emit(FossilsDownloadingState());
     try {
-      _fossils = await _fossilsRepository.getFossils();
-      emit(MapInitialState());
+      final fossils = await _fossilsRepository.getFossils();
+      _fossilsSink.add(fossils);
     } catch (error) {
-      Logger.d('$error');
-      emit(ErrorState(
-        errorMessageKey: 'map.finds_retrieving_error',
+      _fossilsSink.addError(GeneralError(
+        msgKey: 'map.finds_retrieving_error',
+        technicalMsg: '$error',
       ));
     }
   }
@@ -59,7 +71,10 @@ class MapCubit extends Cubit<MapState> {
     int nextActiveBaseMapIndex =
         (prevActiveBaseMapIndex + 1) % _baseMapsInfo.length;
     _baseMapsInfo[nextActiveBaseMapIndex].isActive = true;
-    emit(MapInitialState());
+    final activeMapUrlTemplate = _baseMapsInfo
+        .firstWhere((baseMapInfo) => baseMapInfo.isActive)
+        .urlTemplate;
+    _mapUrlTemplateSink.add(activeMapUrlTemplate);
   }
 
   void saveMarkerData(
@@ -76,14 +91,16 @@ class MapCubit extends Cubit<MapState> {
       row2: fossilDto.fossilType,
       row3: fossilDto.geologicalPeriod,
     );
-    emit(MapInitialState());
+    _markerDataSink.add(_markerData);
   }
 
   void clearMarkerData() {
     if (_markerData != null) {
-      _initialPoint = _markerData!.position;
       _markerData = null;
-      emit(MapInitialState());
+      _markerDataSink.add(null);
     }
   }
+
+  LatLng getMapInitialPoint() =>
+      _markerData?.position ?? MapConsts.initialCenter;
 }
