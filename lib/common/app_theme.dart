@@ -5,7 +5,8 @@ final appTheme = ThemeData(
   colorScheme: const ColorScheme(
     primary: Colors.amber,
     brightness: Brightness.light,
-    onPrimary: Colors.black,
+    onPrimary: Colors.white,
+
     secondary: Colors.amber,
     onSecondary: Colors.black,
     error: Colors.red,
