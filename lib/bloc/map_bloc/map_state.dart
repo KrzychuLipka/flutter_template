@@ -4,8 +4,6 @@ abstract class MapState {}
 
 class Initial extends MapState {}
 
-class RefreshWidgetState extends MapState {}
-
 class ErrorState extends MapState {
   String msgKey;
 

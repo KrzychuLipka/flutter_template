@@ -13,11 +13,7 @@ class AppWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       supportedLocales: AppLocaleUtils.supportedLocales,
-      localizationsDelegates: const [
-        AppLocaleUtils.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-      ],
+      localizationsDelegates: GlobalMaterialLocalizations.delegates,
       theme: appTheme,
       home: _mapBlocProvider(),
     );

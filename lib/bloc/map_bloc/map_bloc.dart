@@ -1,57 +1,52 @@
+import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_template/common/consts/map_consts.dart';
-import 'package:flutter_template/data/model/wms_layer.dart';
+import 'package:flutter_template/common/utils/logger.dart';
+import 'package:flutter_template/data/repository/building/buildings_repository.dart';
+import 'package:get_it/get_it.dart';
 
 part 'map_event.dart';
-
 part 'map_state.dart';
 
 class MapBloc extends Bloc<MapEvent, MapState> {
-  MapController get mapController => _mapController;
-  final MapController _mapController = MapController();
-  final List<WMSLayer> _wmsLayers = [
-    WMSLayer(name: MapConsts.layerNameParcels),
-    WMSLayer(name: MapConsts.layerNameParcelNumbers),
-    WMSLayer(name: MapConsts.layerNameBuildings),
-  ];
+  final _mapViewController = ArcGISMapView.createController();
+  final _buildingsRepository = GetIt.instance<BuildingsRepository>();
+
+  ArcGISMapViewController get mapViewController => _mapViewController;
 
   MapBloc() : super(Initial()) {
+    Logger.d('state: $state');
     on<MapEvent>((event, emitter) async {
-      if (event is ToggleWmsLayer) {
-        _toggleWmsLayerActiveState(event.wmsLayerName, emitter);
-      }
+      Logger.d('event: $event');
+      // if (event is ToggleWmsLayer) {
+      //   emitter(RefreshWidgetState());
+      // }
     });
   }
 
-  List<String> get activeWmsLayerNames {
-    final list = _wmsLayers
-        .where((layer) => layer.isActive)
-        .map((layer) => layer.name)
-        .toList();
-    for (var listItem in _wmsLayers) {
-      print("${listItem.name}: ${listItem.isActive}");
-    }
-    return list;
+  void setUpMap() {
+    _mapViewController.arcGISMap =
+        ArcGISMap.withBasemapStyle(MapConsts.initialMapStyle);
+    _mapViewController.setViewpoint(
+      Viewpoint.withLatLongScale(
+        latitude: MapConsts.initialPointLat,
+        longitude: MapConsts.initialPointLng,
+        scale: MapConsts.initialScale,
+      ),
+    );
   }
 
-  bool isActiveWmsLayer(
-    String wmsLayerName,
-  ) {
-    return _wmsLayers
-        .firstWhere((layer) => layer.name == wmsLayerName)
-        .isActive;
-  }
-
-  void _toggleWmsLayerActiveState(
-    String wmsLayerName,
-    Emitter<MapState> emitter,
-  ) {
-    for (var wmsLayer in _wmsLayers) {
-      if (wmsLayer.name == wmsLayerName) {
-        wmsLayer.isActive = !wmsLayer.isActive;
+  void fetchBuildings() async {
+    // TODO Loader + Error handling
+    try {
+      final getClustersResponse = await _buildingsRepository.getClusters();
+      final clusterFeatures = getClustersResponse.clusterFeatures ?? [];
+      for (var i = 0; i < clusterFeatures.length; i++) {
+        final cluster = clusterFeatures[i];
+        Logger.d('Cluster ID: ${cluster.cluster?.id}');
       }
+    } catch (error) {
+      Logger.d('Fetch buildings error: $error');
     }
-    emitter(RefreshWidgetState());
   }
 }

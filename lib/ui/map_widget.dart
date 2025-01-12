@@ -1,9 +1,7 @@
+import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_template/bloc/map_bloc/map_bloc.dart';
-import 'package:flutter_template/common/consts/map_consts.dart';
-import 'package:flutter_template/common/dimens.dart';
 import 'package:flutter_template/common/utils/toast_utils.dart';
 import 'package:get_it/get_it.dart';
 
@@ -23,7 +21,7 @@ class MapWidget extends StatelessWidget {
       builder: (context, state) {
         return Scaffold(
           body: _map(context),
-          floatingActionButton: _layersButtons(context),
+          // floatingActionButton: _layersButtons(context),
         );
       },
     );
@@ -32,70 +30,56 @@ class MapWidget extends StatelessWidget {
   Widget _map(
     BuildContext context,
   ) {
-    return FlutterMap(
-      mapController: context.read<MapBloc>().mapController,
-      options: const MapOptions(
-        initialCenter: MapConsts.initialCenter,
-        initialZoom: MapConsts.initialZoom,
-      ),
-      children: [
-        TileLayer(
-          urlTemplate: MapConsts.baseMapUrlTemplate,
-        ),
-        TileLayer(
-          wmsOptions: WMSTileLayerOptions(
-            baseUrl: MapConsts.wmsUrl,
-            format: MapConsts.wmsDataFormat,
-            version: MapConsts.wmsVersion,
-            layers: context.read<MapBloc>().activeWmsLayerNames,
-            crs: const Epsg3857(),
-            transparent: true,
-          ),
-        ),
-      ],
+    final bloc = context.read<MapBloc>();
+    return ArcGISMapView(
+      controllerProvider: () => bloc.mapViewController,
+      onMapViewReady: () {
+        bloc.setUpMap();
+        bloc.fetchBuildings();
+      },
     );
   }
 
-  Widget _layersButtons(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        _toggleWmsLayerButton(
-          wmsLayerName: MapConsts.layerNameParcels,
-          iconData: Icons.border_style,
-          context: context,
-        ),
-        const SizedBox(height: Dimens.marginSmall),
-        _toggleWmsLayerButton(
-          wmsLayerName: MapConsts.layerNameParcelNumbers,
-          iconData: Icons.numbers,
-          context: context,
-        ),
-        const SizedBox(height: Dimens.marginSmall),
-        _toggleWmsLayerButton(
-          wmsLayerName: MapConsts.layerNameBuildings,
-          iconData: Icons.maps_home_work,
-          context: context,
-        ),
-      ],
-    );
-  }
+// Widget _layersButtons(BuildContext context) {
+//   return Column(
+//     mainAxisAlignment: MainAxisAlignment.end,
+//     children: [
+//       _toggleWmsLayerButton(
+//         wmsLayerName: MapConsts.layerNameParcels,
+//         iconData: Icons.border_style,
+//         context: context,
+//       ),
+//       const SizedBox(height: Dimens.marginSmall),
+//       _toggleWmsLayerButton(
+//         wmsLayerName: MapConsts.layerNameParcelNumbers,
+//         iconData: Icons.numbers,
+//         context: context,
+//       ),
+//       const SizedBox(height: Dimens.marginSmall),
+//       _toggleWmsLayerButton(
+//         wmsLayerName: MapConsts.layerNameBuildings,
+//         iconData: Icons.maps_home_work,
+//         context: context,
+//       ),
+//     ],
+//   );
+// }
 
-  Widget _toggleWmsLayerButton({
-    required String wmsLayerName,
-    required IconData iconData,
-    required BuildContext context,
-  }) {
-    final isActiveLayer =
-        context.read<MapBloc>().isActiveWmsLayer(wmsLayerName);
-    return FloatingActionButton(
-      onPressed: () =>
-          context.read<MapBloc>().add(ToggleWmsLayer(wmsLayerName)),
-      backgroundColor: isActiveLayer ? Colors.amber : Colors.black,
-      child: Icon(
-        iconData,
-        color: isActiveLayer ? Colors.black : Colors.amber,
-      ),
-    );
-  }
+// Widget _toggleWmsLayerButton({
+//   required String wmsLayerName,
+//   required IconData iconData,
+//   required BuildContext context,
+// }) {
+//   final isActiveLayer =
+//       context.read<MapBloc>().isActiveWmsLayer(wmsLayerName);
+//   return FloatingActionButton(
+//     onPressed: () =>
+//         context.read<MapBloc>().add(ToggleWmsLayer(wmsLayerName)),
+//     backgroundColor: isActiveLayer ? Colors.amber : Colors.black,
+//     child: Icon(
+//       iconData,
+//       color: isActiveLayer ? Colors.black : Colors.amber,
+//     ),
+//   );
+// }
 }

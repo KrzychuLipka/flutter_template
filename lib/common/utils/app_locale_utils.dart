@@ -5,11 +5,9 @@ import 'package:flutter/services.dart';
 
 class AppLocaleUtils {
   static const List<Locale> supportedLocales = [
-    Locale('en', _countryCodeUS),
-    Locale('pl', _countryCodePL)
+    Locale('en', 'US'),
+    Locale('pl', 'PL')
   ];
-  static const _countryCodeUS = 'US';
-  static const _countryCodePL = 'PL';
 
   final Locale locale;
 
