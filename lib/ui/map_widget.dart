@@ -33,10 +33,7 @@ class MapWidget extends StatelessWidget {
     final bloc = context.read<MapBloc>();
     return ArcGISMapView(
       controllerProvider: () => bloc.mapViewController,
-      onMapViewReady: () {
-        bloc.setUpMap();
-        bloc.fetchBuildings();
-      },
+      onMapViewReady: () => bloc.setUpMap(),
     );
   }
 

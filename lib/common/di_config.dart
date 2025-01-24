@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:flutter_template/common/utils/map_utils.dart';
 import 'package:flutter_template/common/utils/toast_utils.dart';
 import 'package:flutter_template/data/repository/building/buildings_api.dart';
 import 'package:flutter_template/data/repository/building/buildings_repository.dart';
@@ -17,6 +18,7 @@ class DiConfig {
   }
 
   static void _setUpUtils() {
+    _getIt.registerFactory<MapUtils>(() => MapUtils());
     _getIt.registerFactory<ToastUtils>(() => ToastUtils());
   }
 
