@@ -33,50 +33,9 @@ class MapWidget extends StatelessWidget {
     final bloc = context.read<MapBloc>();
     return ArcGISMapView(
       controllerProvider: () => bloc.mapViewController,
-      onMapViewReady: () => bloc.setUpMap(),
+      onMapViewReady: () {
+        bloc.setUpMap();
+      },
     );
   }
-
-// Widget _layersButtons(BuildContext context) {
-//   return Column(
-//     mainAxisAlignment: MainAxisAlignment.end,
-//     children: [
-//       _toggleWmsLayerButton(
-//         wmsLayerName: MapConsts.layerNameParcels,
-//         iconData: Icons.border_style,
-//         context: context,
-//       ),
-//       const SizedBox(height: Dimens.marginSmall),
-//       _toggleWmsLayerButton(
-//         wmsLayerName: MapConsts.layerNameParcelNumbers,
-//         iconData: Icons.numbers,
-//         context: context,
-//       ),
-//       const SizedBox(height: Dimens.marginSmall),
-//       _toggleWmsLayerButton(
-//         wmsLayerName: MapConsts.layerNameBuildings,
-//         iconData: Icons.maps_home_work,
-//         context: context,
-//       ),
-//     ],
-//   );
-// }
-
-// Widget _toggleWmsLayerButton({
-//   required String wmsLayerName,
-//   required IconData iconData,
-//   required BuildContext context,
-// }) {
-//   final isActiveLayer =
-//       context.read<MapBloc>().isActiveWmsLayer(wmsLayerName);
-//   return FloatingActionButton(
-//     onPressed: () =>
-//         context.read<MapBloc>().add(ToggleWmsLayer(wmsLayerName)),
-//     backgroundColor: isActiveLayer ? Colors.amber : Colors.black,
-//     child: Icon(
-//       iconData,
-//       color: isActiveLayer ? Colors.black : Colors.amber,
-//     ),
-//   );
-// }
 }

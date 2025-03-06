@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:flutter_template/common/utils/gps_utils.dart';
 import 'package:flutter_template/common/utils/map_utils.dart';
 import 'package:flutter_template/common/utils/toast_utils.dart';
 import 'package:flutter_template/data/repository/building/buildings_api.dart';
@@ -18,6 +19,7 @@ class DiConfig {
   }
 
   static void _setUpUtils() {
+    _getIt.registerFactory<GpsUtils>(() => GpsUtils());
     _getIt.registerFactory<MapUtils>(() => MapUtils());
     _getIt.registerFactory<ToastUtils>(() => ToastUtils());
   }
